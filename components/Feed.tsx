@@ -5,13 +5,14 @@ import { Post } from './Post';
 
 interface FeedProps {
   posts: PostType[];
+  onOpenComments: (post: PostType) => void;
 }
 
-export const Feed: React.FC<FeedProps> = ({ posts }) => {
+export const Feed: React.FC<FeedProps> = ({ posts, onOpenComments }) => {
   return (
     <div className="flex flex-col">
       {posts.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post key={post.id} post={post} onOpenComments={onOpenComments} />
       ))}
     </div>
   );

@@ -37,7 +37,7 @@ const YourStory: React.FC<{ onClick: () => void }> = ({ onClick }) => (
       <div className="absolute bottom-4 right-1 bg-blue-500 rounded-full border-2 border-black p-0.5">
         <AddIcon className="w-4 h-4 text-white" />
       </div>
-      <span className="text-xs truncate w-full text-center">{currentUser.username}</span>
+      <span className="text-xs truncate w-full text-center">Your story</span>
     </button>
   );
 

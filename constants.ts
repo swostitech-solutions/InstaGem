@@ -19,7 +19,10 @@ export const initialPosts: Post[] = [
     mediaType: 'video',
     caption: 'Chasing waterfalls and dreams. What an incredible view!',
     likes: 1204,
-    comments: [],
+    comments: [
+        { user: 'jane_doe', text: 'Stunning view! Where is this?' },
+        { user: 'traveller', text: 'I need to go here! 😍' }
+    ],
     timestamp: '2 hours ago',
   },
   {
@@ -29,7 +32,9 @@ export const initialPosts: Post[] = [
     mediaType: 'image',
     caption: 'Lost in the city lights. Every corner tells a story. #cityscape #travelgram',
     likes: 853,
-    comments: [],
+    comments: [
+        { user: 'alex', text: 'Great shot!' }
+    ],
     timestamp: '5 hours ago',
   },
   {
@@ -49,13 +54,17 @@ export const initialPosts: Post[] = [
     mediaType: 'image',
     caption: 'Vibrant colors and bold strokes. Art truly is a universal language. 🎨',
     likes: 987,
-    comments: [],
+    comments: [
+      { user: 'jane_doe', text: 'This is beautiful.' },
+      { user: 'alex', text: 'Love the colors!' },
+      { user: 'tech_guru', text: 'Amazing composition.' },
+    ],
     timestamp: '2 days ago',
   },
 ];
 
 export const currentUser: Story = {
   id: 'current_user_story',
-  username: 'your_story',
+  username: 'john_dev',
   avatarUrl: 'https://picsum.photos/seed/99/100/100',
 };

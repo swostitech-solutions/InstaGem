@@ -8,12 +8,14 @@ import { SaveIcon } from './icons/SaveIcon';
 import { OptionsIcon } from './icons/OptionsIcon';
 import { VolumeUpIcon } from './icons/VolumeUpIcon';
 import { VolumeOffIcon } from './icons/VolumeOffIcon';
+import { currentUser } from '../constants';
 
 interface PostProps {
   post: PostType;
+  onOpenComments: (post: PostType) => void;
 }
 
-export const Post: React.FC<PostProps> = ({ post }) => {
+export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -28,6 +30,24 @@ export const Post: React.FC<PostProps> = ({ post }) => {
     }
   };
   
+  const handleShare = async () => {
+    const shareData = {
+      title: `InstaGem post by ${post.user.username}`,
+      text: post.caption,
+      url: window.location.href, // In a real app, this would be a permalink to the post
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing post:', error);
+    }
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -104,10 +124,10 @@ export const Post: React.FC<PostProps> = ({ post }) => {
               isFilled={isLiked}
             />
           </button>
-          <button aria-label="Comment">
+          <button onClick={() => onOpenComments(post)} aria-label="Comment">
             <CommentIcon className="w-7 h-7" />
           </button>
-          <button aria-label="Share">
+          <button onClick={handleShare} aria-label="Share">
             <ShareIcon className="w-7 h-7" />
           </button>
         </div>
@@ -126,8 +146,18 @@ export const Post: React.FC<PostProps> = ({ post }) => {
           <span className="font-semibold">{post.user.username}</span>
           <span className="ml-2">{post.caption}</span>
         </p>
-        <p className="text-gray-400 mt-2">View all {post.comments.length} comments</p>
-        <p className="text-gray-500 text-xs mt-1 uppercase">{post.timestamp}</p>
+        {post.comments.length > 0 && (
+            <button onClick={() => onOpenComments(post)} className="text-gray-400 mt-2 block text-left">
+                View all {post.comments.length} comments
+            </button>
+        )}
+        <div className="flex items-center space-x-2 mt-2">
+            <img src={currentUser.avatarUrl} alt="Your avatar" className="w-6 h-6 rounded-full" />
+            <button onClick={() => onOpenComments(post)} className="text-gray-500 text-left flex-grow">
+                Add a comment...
+            </button>
+        </div>
+        <p className="text-gray-500 text-xs mt-2 uppercase">{post.timestamp}</p>
       </div>
     </article>
   );
