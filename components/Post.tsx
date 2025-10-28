@@ -19,6 +19,7 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isSharing, setIsSharing] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const toggleLike = () => setIsLiked(!isLiked);
@@ -31,20 +32,31 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
   };
   
   const handleShare = async () => {
+    if (isSharing) return;
+
+    const postUrl = `${window.location.origin}/#post/${post.id}`;
     const shareData = {
       title: `InstaGem post by ${post.user.username}`,
       text: post.caption,
-      url: window.location.href, // In a real app, this would be a permalink to the post
+      url: postUrl,
     };
+
+    setIsSharing(true);
+
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(postUrl);
         alert('Link copied to clipboard!');
       }
-    } catch (error) {
-      console.error('Error sharing post:', error);
+    } catch (error: any) {
+      // Don't log an error if the user cancels the share sheet
+      if (error.name !== 'AbortError') {
+        console.error('Error sharing post:', error);
+      }
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -127,7 +139,7 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
           <button onClick={() => onOpenComments(post)} aria-label="Comment">
             <CommentIcon className="w-7 h-7" />
           </button>
-          <button onClick={handleShare} aria-label="Share">
+          <button onClick={handleShare} aria-label="Share" disabled={isSharing} className="disabled:opacity-50">
             <ShareIcon className="w-7 h-7" />
           </button>
         </div>
