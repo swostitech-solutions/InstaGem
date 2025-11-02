@@ -1,6 +1,10 @@
-
 import React from 'react';
-export const SearchIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+
+interface SearchIconProps extends React.SVGProps<SVGSVGElement> {
+  isFilled?: boolean;
+}
+
+export const SearchIcon: React.FC<SearchIconProps> = ({ isFilled, ...props }) => (
   <svg
     aria-label="Search"
     color="rgb(245, 245, 245)"
@@ -17,14 +21,14 @@ export const SearchIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
+      strokeWidth={isFilled ? "3" : "2"}
     ></path>
     <line
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
+      strokeWidth={isFilled ? "3" : "2"}
       x1="16.511"
       x2="22"
       y1="16.511"
