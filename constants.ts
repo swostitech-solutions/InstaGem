@@ -65,6 +65,33 @@ const userCoderCat: User = {
   following: 42,
 };
 
+// --- New Educational Users ---
+const userKidsLearning: User = {
+    username: 'kids_learning_zone',
+    avatarUrl: 'https://picsum.photos/seed/edu1/100/100',
+    fullName: 'Kids Learning Zone',
+    bio: 'Fun and educational content for the little ones! 🎨',
+    followers: 189500,
+    following: 5,
+};
+const userRhymeTime: User = {
+    username: 'rhyme_time',
+    avatarUrl: 'https://picsum.photos/seed/edu2/100/100',
+    fullName: 'Rhyme Time',
+    bio: 'Classic nursery rhymes and songs for kids. 🎶',
+    followers: 250000,
+    following: 3,
+};
+const userScienceFun: User = {
+    username: 'science_fun',
+    avatarUrl: 'https://picsum.photos/seed/edu3/100/100',
+    fullName: 'Science Fun',
+    bio: 'Making science and math easy and fun! 🔬🧮',
+    followers: 450000,
+    following: 12,
+};
+
+
 export const stories: Story[] = [
   { id: '1', ...userAlex },
   { id: '2', ...userJane },
@@ -77,6 +104,46 @@ export const stories: Story[] = [
 ];
 
 export const initialPosts: Post[] = [
+  // --- New Educational Posts ---
+  {
+    id: 'edu_p1',
+    user: userKidsLearning,
+    mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    mediaType: 'video',
+    caption: 'Learn the ABCs with us! 🅰️🅱️Č Fun for toddlers and preschoolers. #Alphabet #KidsLearning #Under5',
+    likes: 15234,
+    comments: [
+      { user: 'jane_doe', text: 'My son loves this!' },
+      { user: 'alex', text: 'So colorful and engaging.' }
+    ],
+    timestamp: '1 day ago',
+  },
+  {
+    id: 'edu_p2',
+    user: userRhymeTime,
+    mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    mediaType: 'video',
+    caption: "Sing along to 'Twinkle, Twinkle, Little Star'! ✨ A classic rhyme for your little one. #NurseryRhymes #KidsSongs #Rhymes",
+    likes: 22100,
+    comments: [
+        { user: 'traveller', text: 'A timeless classic! ❤️' }
+    ],
+    timestamp: '2 days ago',
+  },
+  {
+    id: 'edu_p3',
+    user: userScienceFun,
+    mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    mediaType: 'video',
+    caption: 'Ever wondered how gravity works? 🍎 Let\'s break down the basics of this amazing force! #Science #Physics #Education #STEM',
+    likes: 31054,
+    comments: [
+        { user: 'tech_guru', text: 'Great explanation!' },
+        { user: 'coder_cat', text: 'Physics is cool! ⚛️' }
+    ],
+    timestamp: '3 days ago',
+  },
+  // --- Existing Posts ---
   {
     id: 'p1',
     user: userNatureFan,
@@ -149,6 +216,9 @@ const allUsers: User[] = [
   userFoodie,
   userNatureFan,
   userCoderCat,
+  userKidsLearning,
+  userRhymeTime,
+  userScienceFun,
 ];
 
 // Create a unique list of users based on username
