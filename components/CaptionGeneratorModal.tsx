@@ -1,8 +1,8 @@
-
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { generateCaption } from '../services/geminiService';
 import type { Post } from '../types';
 import { currentUser } from '../constants';
+import { UserSuggestions } from './UserSuggestions';
 
 interface CaptionGeneratorModalProps {
   onClose: () => void;
@@ -28,6 +28,7 @@ export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ on
   const [caption, setCaption] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [suggestionQuery, setSuggestionQuery] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -36,7 +37,29 @@ export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ on
       setImagePreview(URL.createObjectURL(file));
       setCaption('');
       setError(null);
+      setSuggestionQuery(null);
     }
+  };
+
+  const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCaption(value);
+
+    const words = value.split(/\s+/);
+    const lastWord = words[words.length - 1];
+    
+    if (lastWord.startsWith('@')) {
+      setSuggestionQuery(lastWord.substring(1));
+    } else {
+      setSuggestionQuery(null);
+    }
+  };
+
+  const handleSelectUser = (username: string) => {
+    const words = caption.split(/\s+/);
+    words[words.length - 1] = `@${username}`;
+    setCaption(words.join(' ') + ' ');
+    setSuggestionQuery(null);
   };
 
   const handleGenerateCaption = async () => {
@@ -95,13 +118,21 @@ export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ on
           ) : (
             <>
               <img src={imagePreview} alt="Preview" className="w-full max-h-80 object-contain rounded-lg" />
-              <textarea
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-                placeholder={isLoading ? "Generating caption..." : "Your AI-generated caption will appear here..."}
-                className="w-full h-24 p-2 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
-                disabled={isLoading}
-              />
+              <div className="relative">
+                {suggestionQuery !== null && (
+                  <UserSuggestions 
+                    query={suggestionQuery} 
+                    onSelectUser={handleSelectUser} 
+                  />
+                )}
+                <textarea
+                  value={caption}
+                  onChange={handleCaptionChange}
+                  placeholder={isLoading ? "Generating caption..." : "Write a caption..."}
+                  className="w-full h-24 p-2 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500"
+                  disabled={isLoading}
+                />
+              </div>
               <button
                 onClick={handleGenerateCaption}
                 disabled={isLoading}

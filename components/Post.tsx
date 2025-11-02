@@ -7,7 +7,7 @@ import { SaveIcon } from './icons/SaveIcon';
 import { OptionsIcon } from './icons/OptionsIcon';
 import { VolumeUpIcon } from './icons/VolumeUpIcon';
 import { VolumeOffIcon } from './icons/VolumeOffIcon';
-import { currentUser } from '../constants';
+import { currentUser, userLookup } from '../constants';
 
 interface PostProps {
   post: PostType;
@@ -85,6 +85,28 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick
     };
   }, []);
 
+  const renderCaption = (captionText: string) => {
+    const parts = captionText.split(/(\B@[\w_]+)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('@')) {
+        const username = part.substring(1);
+        const user = userLookup.get(username);
+        if (user) {
+          return (
+            <button
+              key={index}
+              onClick={() => onProfileClick(user)}
+              className="font-semibold text-blue-400 hover:underline"
+            >
+              {part}
+            </button>
+          );
+        }
+      }
+      return <React.Fragment key={index}>{part}</React.Fragment>;
+    });
+  };
+
   return (
     <article className="border-b border-gray-800">
       {/* Post Header */}
@@ -156,9 +178,9 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick
       {/* Post Info */}
       <div className="px-3 pb-4 text-sm">
         <p className="font-semibold">{isLiked ? post.likes + 1 : post.likes} likes</p>
-        <p className="mt-1">
+        <p className="mt-1 whitespace-pre-wrap">
             <button onClick={() => onProfileClick(post.user)} className="font-semibold">{post.user.username}</button>
-          <span className="ml-2">{post.caption}</span>
+          <span className="ml-2">{renderCaption(post.caption)}</span>
         </p>
         {post.comments.length > 0 && (
             <button onClick={() => onOpenComments(post)} className="text-gray-400 mt-2 block text-left">

@@ -95,7 +95,7 @@ export const initialPosts: Post[] = [
     user: userTraveller,
     mediaUrl: 'https://picsum.photos/seed/10/600/800',
     mediaType: 'image',
-    caption: 'Lost in the city lights. Every corner tells a story. #cityscape #travelgram',
+    caption: 'Lost in the city lights with @alex. Every corner tells a story. #cityscape #travelgram',
     likes: 853,
     comments: [
         { user: 'alex', text: 'Great shot!' }
@@ -107,7 +107,7 @@ export const initialPosts: Post[] = [
     user: userTechGuru,
     mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     mediaType: 'video',
-    caption: 'The future is now! Check out this amazing piece of tech in action.',
+    caption: 'The future is now! Check out this amazing piece of tech in action. Thanks for the tip @coder_cat',
     likes: 2341,
     comments: [],
     timestamp: '1 day ago',
@@ -137,3 +137,32 @@ export const currentUser: Story & User = {
   followers: 1337,
   following: 101,
 };
+
+// --- New additions for user mentions ---
+const allUsers: User[] = [
+  currentUser,
+  userAlex,
+  userJane,
+  userTechGuru,
+  userArtLover,
+  userTraveller,
+  userFoodie,
+  userNatureFan,
+  userCoderCat,
+];
+
+// Create a unique list of users based on username
+const userMap = new Map<string, User>();
+allUsers.forEach(user => {
+  if (!userMap.has(user.username)) {
+    userMap.set(user.username, user);
+  }
+});
+initialPosts.forEach(post => {
+    if (!userMap.has(post.user.username)) {
+      userMap.set(post.user.username, post.user);
+    }
+});
+
+export const uniqueUsers: User[] = Array.from(userMap.values());
+export const userLookup = new Map<string, User>(uniqueUsers.map(u => [u.username, u]));
