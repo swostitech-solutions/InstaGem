@@ -5,12 +5,13 @@ import { StoryTray } from './components/StoryTray';
 import { BottomNav } from './components/BottomNav';
 import { CaptionGeneratorModal } from './components/CaptionGeneratorModal';
 import { stories, initialPosts, currentUser } from './constants';
-import type { Post as PostType, Story } from './types';
+import type { Post as PostType, Story, User } from './types';
 import { StoryViewer } from './components/StoryViewer';
 import { CommentModal } from './components/CommentModal';
 import { ReelsView } from './components/ReelsView';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { SearchView } from './components/SearchView';
+import { ProfileView } from './components/ProfileView';
 
 export type ActiveTab = 'home' | 'search' | 'reels' | 'shop' | 'profile';
 
@@ -20,7 +21,14 @@ const generateExplorePosts = (startIndex: number, count: number): PostType[] => 
       const isVideo = Math.random() > 0.8;
       return {
           id: `ex_p${postIndex}`,
-          user: { username: `creator_${postIndex}`, avatarUrl: `https://picsum.photos/seed/${200 + postIndex}/100/100` },
+          user: { 
+            username: `creator_${postIndex}`, 
+            avatarUrl: `https://picsum.photos/seed/${200 + postIndex}/100/100`,
+            fullName: `Creator ${postIndex}`,
+            bio: 'Sharing my creative journey with the world. ✨',
+            followers: Math.floor(Math.random() * 10000),
+            following: Math.floor(Math.random() * 500),
+          },
           mediaUrl: isVideo 
               ? 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
               : `https://picsum.photos/seed/${200 + postIndex}/300/300`,
@@ -46,6 +54,7 @@ const App: React.FC = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [explorePosts, setExplorePosts] = useState<PostType[]>([]);
   const [isLoadingExplore, setIsLoadingExplore] = useState(false);
+  const [viewingProfile, setViewingProfile] = useState<User | null>(null);
 
   const handleAddPost = useCallback((newPost: Omit<PostType, 'id'>) => {
     setPosts(prevPosts => [
@@ -100,7 +109,11 @@ const App: React.FC = () => {
         id: `p${postIndex}`,
         user: { 
             username: `user_${postIndex}`, 
-            avatarUrl: `https://picsum.photos/seed/${postIndex}/100/100` 
+            avatarUrl: `https://picsum.photos/seed/${postIndex}/100/100`,
+            fullName: `User ${postIndex}`,
+            bio: 'Just another user enjoying the feed.',
+            followers: Math.floor(Math.random() * 1000),
+            following: Math.floor(Math.random() * 200),
         },
         mediaUrl: isVideo 
             ? 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' 
@@ -132,10 +145,27 @@ useEffect(() => {
   }
 }, [explorePosts.length]);
 
+const handleProfileClick = (user: User) => {
+    window.scrollTo(0, 0);
+    setViewingProfile(user);
+    setActiveTab('profile');
+};
+
+const handleBackFromProfile = () => {
+    setViewingProfile(null);
+    setActiveTab('home');
+};
+
+const handleTabChange = (tab: ActiveTab) => {
+    setViewingProfile(tab === 'profile' ? currentUser : null);
+    setActiveTab(tab);
+};
+
 
   useEffect(() => {
     const handleScroll = () => {
-      // Trigger load when user is 200px from the bottom
+      if (viewingProfile) return; // Don't load content when viewing a profile
+
       if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 200) {
         return;
       }
@@ -149,16 +179,25 @@ useEffect(() => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeTab, isLoadingMore, loadMorePosts, isLoadingExplore, loadMoreExplorePosts]);
+  }, [activeTab, isLoadingMore, loadMorePosts, isLoadingExplore, loadMoreExplorePosts, viewingProfile]);
 
 
   const renderContent = () => {
+    if (activeTab === 'profile' && viewingProfile) {
+        const allPosts = [...posts, ...explorePosts];
+        const userPosts = allPosts.filter(p => p.user.username === viewingProfile.username);
+        // Deduplicate posts
+        const uniqueUserPosts = Array.from(new Map(userPosts.map(p => [p.id, p])).values());
+
+        return <ProfileView user={viewingProfile} posts={uniqueUserPosts} />;
+    }
+    
     switch (activeTab) {
       case 'home':
         return (
           <>
             <StoryTray stories={stories} onStoryClick={handleStoryClick} />
-            <Feed posts={posts} onOpenComments={handleOpenComments} />
+            <Feed posts={posts} onOpenComments={handleOpenComments} onProfileClick={handleProfileClick} />
             {isLoadingMore && <LoadingSpinner />}
           </>
         );
@@ -172,10 +211,9 @@ useEffect(() => {
           </>
         );
       case 'shop':
-      case 'profile':
         return (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-116px)] text-white bg-black animate-fade-in">
-                <h2 className="text-2xl font-bold mb-2">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} coming soon!</h2>
+                <h2 className="text-2xl font-bold mb-2">Shop coming soon!</h2>
                 <p className="text-gray-400">This feature is under construction.</p>
             </div>
         );
@@ -188,9 +226,15 @@ useEffect(() => {
   return (
     <div className="bg-black text-white min-h-screen font-sans">
       <div className="max-w-md mx-auto relative pb-16">
-        <Header onAddClick={() => setIsModalOpen(true)} />
+        <Header 
+            onAddClick={() => setIsModalOpen(true)}
+            isProfileView={!!viewingProfile}
+            profileUsername={viewingProfile?.username}
+            onBackClick={handleBackFromProfile}
+            isCurrentUserProfile={viewingProfile?.username === currentUser.username}
+        />
         {renderContent()}
-        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+        <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
         {isModalOpen && (
           <CaptionGeneratorModal
             onClose={() => setIsModalOpen(false)}

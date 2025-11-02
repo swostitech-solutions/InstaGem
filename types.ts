@@ -2,6 +2,10 @@
 export interface User {
   username: string;
   avatarUrl: string;
+  fullName: string;
+  bio: string;
+  followers: number;
+  following: number;
 }
 
 export interface Story extends User {

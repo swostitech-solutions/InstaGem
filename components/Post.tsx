@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import type { Post as PostType } from '../types';
+import type { Post as PostType, User } from '../types';
 import { HeartIcon } from './icons/HeartIcon';
 import { CommentIcon } from './icons/CommentIcon';
 import { ShareIcon } from './icons/ShareIcon';
@@ -13,9 +12,10 @@ import { currentUser } from '../constants';
 interface PostProps {
   post: PostType;
   onOpenComments: (post: PostType) => void;
+  onProfileClick: (user: User) => void;
 }
 
-export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
+export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -89,14 +89,16 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
     <article className="border-b border-gray-800">
       {/* Post Header */}
       <div className="flex items-center p-3">
-        <div className="rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500">
-          <img
-            className="w-8 h-8 rounded-full object-cover"
-            src={post.user.avatarUrl}
-            alt={post.user.username}
-          />
-        </div>
-        <span className="font-semibold text-sm ml-3">{post.user.username}</span>
+        <button onClick={() => onProfileClick(post.user)} className="flex items-center">
+            <div className="rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500">
+              <img
+                className="w-8 h-8 rounded-full object-cover"
+                src={post.user.avatarUrl}
+                alt={post.user.username}
+              />
+            </div>
+            <span className="font-semibold text-sm ml-3">{post.user.username}</span>
+        </button>
         <button className="ml-auto">
           <OptionsIcon className="w-5 h-5" />
         </button>
@@ -155,7 +157,7 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments }) => {
       <div className="px-3 pb-4 text-sm">
         <p className="font-semibold">{isLiked ? post.likes + 1 : post.likes} likes</p>
         <p className="mt-1">
-          <span className="font-semibold">{post.user.username}</span>
+            <button onClick={() => onProfileClick(post.user)} className="font-semibold">{post.user.username}</button>
           <span className="ml-2">{post.caption}</span>
         </p>
         {post.comments.length > 0 && (
