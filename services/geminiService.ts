@@ -1,17 +1,17 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
-  console.warn("Gemini API key not found. Please set the API_KEY environment variable.");
+  console.warn("Gemini API key not found. Please set VITE_GEMINI_API_KEY in your .env file.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 export const generateCaption = async (imageBase64: string, mimeType: string): Promise<string> => {
-  if (!API_KEY) {
-    return "API key not configured. Please check your environment variables.";
+  if (!API_KEY || !ai) {
+    return "⚠️ API key not configured. Please add your Gemini API key to the .env file and restart the server.";
   }
 
   try {
