@@ -40,9 +40,9 @@ export const educationalPosts: PostType[] = [
       followers: 5000000,
       following: 0,
     },
-    mediaUrl: 'https://www.youtube.com/embed/lPgAul0fQNk',
+    mediaUrl: 'https://www.youtube.com/embed/DR97oWy5pw0',
     mediaType: 'video',
-    caption: '🔢 Learn to Count 1-10! Fun math adventure for kids ages 5-7. #Math #Learning #KhanAcademy',
+    caption: '🔢 Learn to Count 1-10! Fun counting song for kids ages 3-7. #Math #Learning #KhanAcademy',
     likes: 45000,
     comments: [
       { user: 'parent_mom', text: 'My kids love this! Very educational ❤️' },
@@ -183,26 +183,25 @@ export const educationalPosts: PostType[] = [
     timestamp: '4 days ago',
   },
 
-  // Khan Academy - History
+  // Simple History - History
   {
     id: 'edu_8',
     user: {
-      username: 'khanacademy',
-      avatarUrl: 'https://ui-avatars.com/api/?name=Khan+Academy&background=14B8A6&color=fff&size=100',
-      fullName: 'Khan Academy',
-      bio: 'World-class education for anyone, anywhere! 🌏',
-      followers: 7000000,
+      username: 'simple_history',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Simple+History&background=14B8A6&color=fff&size=100',
+      fullName: 'Simple History',
+      bio: 'Fun animated history for kids! �',
+      followers: 3000000,
       following: 0,
     },
-    mediaUrl: 'https://www.youtube.com/embed/8ru8mBcWUJA',
+    mediaUrl: 'https://www.youtube.com/embed/qV7AYW6JXUQ',
     mediaType: 'video',
-    caption: '🏛️ Ancient Civilizations: Egypt! Explore pyramids and pharaohs. Ages 9-13 #History #Egypt #Learning',
-    likes: 73000,
+    caption: '� Ancient Egypt for Kids! Learn about pyramids and pharaohs. Ages 8-12. #History #AncientEgypt #Learning',
+    likes: 28000,
     comments: [
-      { user: 'history_buff_11', text: 'I want to visit Egypt now!' },
-      { user: 'middle_school_teacher', text: 'Perfect for my history class!' },
+      { user: 'history_buff', text: 'Fascinating! My daughter is obsessed with Egypt now! 🏺' },
     ],
-    timestamp: '5 days ago',
+    timestamp: '3 days ago',
   },
 
   // Free School - Geography
@@ -276,20 +275,88 @@ export const educationalPosts: PostType[] = [
     id: 'edu_12',
     user: {
       username: 'nasa_kids',
-      avatarUrl: 'https://ui-avatars.com/api/?name=NASA+Kids&background=1E40AF&color=fff&size=100',
+      avatarUrl: 'https://ui-avatars.com/api/?name=NASA+Kids&background=0B3D91&color=fff&size=100',
       fullName: 'NASA Kids Club',
-      bio: 'Explore space with NASA! 🌌🚀',
-      followers: 4200000,
+      bio: 'Explore space with NASA! 🚀',
+      followers: 4000000,
       following: 0,
     },
-    mediaUrl: 'https://www.youtube.com/embed/uKXYJpXBhA4',
+    mediaUrl: 'https://www.youtube.com/embed/libKVRa01L8',
     mediaType: 'video',
-    caption: '🌌 Journey Through the Solar System! Visit planets and moons. Ages 7-14 #Space #NASA #Planets',
-    likes: 156000,
+    caption: '🪐 Solar System for Kids! Explore planets, stars, and space. Ages 7-12. #Space #NASA #Science',
+    likes: 52000,
     comments: [
-      { user: 'space_kid_99', text: 'Mars is my favorite planet! 🔴' },
-      { user: 'astronomy_teacher', text: 'Amazing visual tour!' },
+      { user: 'space_dad', text: 'My son wants to be an astronaut now! 🚀' },
+      { user: 'teacher_mike', text: 'Perfect for my space unit!' },
+    ],
+    timestamp: '1 week ago',
+  },
+
+  // Peekaboo Kidz - Science
+  {
+    id: 'edu_13',
+    user: {
+      username: 'peekaboo_kidz',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Peekaboo+Kidz&background=FF6B6B&color=fff&size=100',
+      fullName: 'Peekaboo Kidz',
+      bio: 'Fun educational videos for curious kids! 🔬',
+      followers: 8000000,
+      following: 0,
+    },
+    mediaUrl: 'https://www.youtube.com/embed/HCDVN7DCzYE',
+    mediaType: 'video',
+    caption: '🦕 Why Did Dinosaurs Go Extinct? Learn about prehistoric times! Ages 6-12. #Dinosaurs #Science #Learning',
+    likes: 67000,
+    comments: [
+      { user: 'dino_lover', text: 'My kids watched this 5 times! 🦖' },
+      { user: 'teacher_jen', text: 'Great for science class!' },
+    ],
+    timestamp: '2 days ago',
+  },
+
+  // Numberblocks - Math
+  {
+    id: 'edu_14',
+    user: {
+      username: 'numberblocks',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Numberblocks&background=4ECDC4&color=fff&size=100',
+      fullName: 'Numberblocks Official',
+      bio: 'Learn numbers the fun way! 🔢',
+      followers: 3500000,
+      following: 0,
+    },
+    mediaUrl: 'https://www.youtube.com/embed/PlwuB9eURHE',
+    mediaType: 'video',
+    caption: '🔢 Learn Addition with Numberblocks! Fun math for ages 3-7. #Math #Numbers #Learning',
+    likes: 89000,
+    comments: [
+      { user: 'math_mom', text: 'This helped my preschooler understand numbers! �' },
+      { user: 'parent_dave', text: 'Brilliant show for early math!' },
+    ],
+    timestamp: '5 days ago',
+  },
+
+  // Alphablocks - Reading
+  {
+    id: 'edu_15',
+    user: {
+      username: 'alphablocks',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Alphablocks&background=FF9F1C&color=fff&size=100',
+      fullName: 'Alphablocks Official',
+      bio: 'Learn to read with phonics! 📖',
+      followers: 2800000,
+      following: 0,
+    },
+    mediaUrl: 'https://www.youtube.com/embed/qR5kT0G8O1E',
+    mediaType: 'video',
+    caption: '📚 Learn Phonics and Reading! Fun alphabet adventure for ages 3-6. #Reading #Phonics #ABC',
+    likes: 72000,
+    comments: [
+      { user: 'reading_teacher', text: 'Best phonics resource! My students love it! 📖' },
+      { user: 'proud_parent', text: 'My daughter is reading now thanks to this!' },
     ],
     timestamp: '1 week ago',
   },
 ];
+
+export default educationalPosts;
