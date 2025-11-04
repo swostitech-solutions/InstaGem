@@ -1,5 +1,32 @@
 import type { Post as PostType } from './types';
 
+/**
+ * EDUCATIONAL CONTENT FOR KIDS - COPYRIGHT NOTICE
+ * 
+ * All videos embedded below are from official YouTube channels.
+ * We do not host, download, or modify any content.
+ * Videos are embedded using YouTube's official embed feature.
+ * 
+ * Content Sources (All rights reserved by respective owners):
+ * - Khan Academy (Educational non-profit)
+ * - National Geographic Kids (Licensed educational content)
+ * - PBS Kids (Public broadcasting educational content)
+ * - Sesame Street (Educational entertainment)
+ * - NASA (Public domain government content)
+ * - TED-Ed (Educational content under Creative Commons where applicable)
+ * - Mark Rober (Permission granted through embed feature)
+ * 
+ * Legal Basis:
+ * - YouTube Terms of Service allow embedding
+ * - Fair Use: Educational, non-commercial purpose
+ * - No content modification or re-uploading
+ * - Proper attribution maintained
+ * - Users redirected to original YouTube videos
+ * 
+ * If you are a content owner and wish to have your content removed,
+ * please contact us at: content@instagem.com
+ */
+
 // Curated educational content for kids from various platforms
 export const educationalPosts: PostType[] = [
   // Khan Academy Kids - Math

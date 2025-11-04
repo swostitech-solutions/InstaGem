@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { Feed } from './components/Feed';
 import { StoryTray } from './components/StoryTray';
 import { BottomNav } from './components/BottomNav';
+import { Footer } from './components/Footer';
 import { stories, initialPosts, currentUser } from './constants';
 import { educationalPosts } from './educationalContent';
 import type { Post as PostType, Story, User } from './types';
@@ -273,6 +274,7 @@ const handleTabChange = (tab: ActiveTab) => {
             isCurrentUserProfile={viewingProfile?.username === currentUser.username}
         />
         {renderContent()}
+        <Footer />
         <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
         {viewingStory && (
           <StoryViewer 
