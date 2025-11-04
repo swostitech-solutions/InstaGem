@@ -47,9 +47,6 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-5">
             {isAuthenticated ? (
               <>
-                <button onClick={onAddClick} aria-label="Create new post">
-                  <AddIcon className="w-7 h-7" />
-                </button>
                 {!isProfileView && (
                   <>
                     <button aria-label="Notifications">

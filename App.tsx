@@ -3,8 +3,8 @@ import { Header } from './components/Header';
 import { Feed } from './components/Feed';
 import { StoryTray } from './components/StoryTray';
 import { BottomNav } from './components/BottomNav';
-import { CaptionGeneratorModal } from './components/CaptionGeneratorModal';
 import { stories, initialPosts, currentUser } from './constants';
+import { educationalPosts } from './educationalContent';
 import type { Post as PostType, Story, User } from './types';
 import { StoryViewer } from './components/StoryViewer';
 import { CommentModal } from './components/CommentModal';
@@ -50,7 +50,6 @@ const generateExplorePosts = (startIndex: number, count: number): PostType[] => 
 const App: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const [posts, setPosts] = useState<PostType[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewingStory, setViewingStory] = useState<Story | null>(null);
   const [commentingPost, setCommentingPost] = useState<PostType | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
@@ -61,61 +60,33 @@ const App: React.FC = () => {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch posts from API
+  // Load educational posts
   const fetchPosts = useCallback(async (page: number = 1) => {
-    if (!isAuthenticated) {
-      setPosts(initialPosts); // Use mock data if not authenticated
-      setIsLoadingPosts(false);
-      return;
-    }
-
     try {
       setIsLoadingPosts(true);
-      const response = await postsAPI.getPosts(page, 10);
-      const apiPosts = response.data.map((post: any) => ({
-        id: post._id,
-        user: {
-          username: post.user.username,
-          avatarUrl: post.user.avatarUrl,
-          fullName: post.user.fullName,
-          bio: post.user.bio || '',
-          followers: post.user.followers?.length || 0,
-          following: post.user.following?.length || 0,
-        },
-        mediaUrl: post.imageUrl,
-        mediaType: post.mediaType || 'image',
-        caption: post.caption,
-        likes: post.likes?.length || 0,
-        comments: post.comments?.map((c: any) => ({
-          user: c.user?.username || 'Anonymous',
-          text: c.text,
-        })) || [],
-        timestamp: new Date(post.createdAt).toLocaleDateString(),
-      }));
+      
+      // Always use educational content for kids
+      const startIndex = (page - 1) * 6;
+      const endIndex = startIndex + 6;
+      const postsToShow = educationalPosts.slice(startIndex, endIndex);
 
       if (page === 1) {
-        setPosts(apiPosts);
+        setPosts(postsToShow);
       } else {
-        setPosts(prev => [...prev, ...apiPosts]);
+        setPosts(prev => [...prev, ...postsToShow]);
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
-      // Fallback to mock data on error
       if (page === 1) {
-        setPosts(initialPosts);
+        setPosts(educationalPosts.slice(0, 6));
       }
     } finally {
       setIsLoadingPosts(false);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // Load posts on mount and when auth changes
   useEffect(() => {
-    fetchPosts(1);
-  }, [fetchPosts]);
-
-  const handleAddPost = useCallback((newPost: Omit<PostType, 'id'>) => {
-    // Refresh posts after adding new one
     fetchPosts(1);
   }, [fetchPosts]);
 
@@ -177,7 +148,7 @@ const App: React.FC = () => {
   };
 
   const loadMorePosts = useCallback(async () => {
-    if (isLoadingMore || !isAuthenticated) return;
+    if (isLoadingMore) return;
 
     setIsLoadingMore(true);
 
@@ -190,7 +161,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoadingMore(false);
     }
-}, [isLoadingMore, currentPage, fetchPosts, isAuthenticated]);
+}, [isLoadingMore, currentPage, fetchPosts]);
 
 const loadMoreExplorePosts = useCallback(async () => {
   if (isLoadingExplore) return;
@@ -295,7 +266,7 @@ const handleTabChange = (tab: ActiveTab) => {
     <div className="bg-black text-white min-h-screen font-sans">
       <div className="max-w-md mx-auto relative pb-16">
         <Header 
-            onAddClick={() => setIsModalOpen(true)}
+            onAddClick={() => {}} // No-op since we removed upload
             isProfileView={!!viewingProfile}
             profileUsername={viewingProfile?.username}
             onBackClick={handleBackFromProfile}
@@ -303,12 +274,6 @@ const handleTabChange = (tab: ActiveTab) => {
         />
         {renderContent()}
         <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
-        {isModalOpen && (
-          <CaptionGeneratorModal
-            onClose={() => setIsModalOpen(false)}
-            onPostCreated={handleAddPost}
-          />
-        )}
         {viewingStory && (
           <StoryViewer 
             story={viewingStory}

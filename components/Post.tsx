@@ -149,6 +149,17 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick
       <div className="relative bg-gray-900">
         {post.mediaType === 'image' ? (
           <img src={post.mediaUrl} alt="Post content" className="w-full object-cover" />
+        ) : post.mediaUrl.includes('youtube.com/embed') ? (
+          <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
+            <iframe
+              src={post.mediaUrl}
+              title="Educational video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute top-0 left-0 w-full h-full"
+              style={{ border: 0 }}
+            />
+          </div>
         ) : (
           <div className="relative">
             <video
