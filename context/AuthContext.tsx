@@ -8,6 +8,19 @@ interface User {
   fullName: string;
   avatarUrl: string;
   bio: string;
+  childAge?: number;
+  parentEmail?: string;
+  favoriteColor?: string;
+}
+
+interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  fullName?: string;
+  childAge?: number;
+  parentEmail?: string;
+  favoriteColor?: string;
 }
 
 interface AuthContextType {
@@ -15,7 +28,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (username: string, email: string, password: string, fullName?: string) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -67,9 +80,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (username: string, email: string, password: string, fullName?: string) => {
+  const register = async (data: RegisterData) => {
     try {
-      const response = await authAPI.register({ username, email, password, fullName });
+      const response = await authAPI.register(data);
       const { token: newToken, ...userData } = response.data;
 
       setToken(newToken);

@@ -13,11 +13,14 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
     email: '',
     password: '',
     fullName: '',
+    age: '',
+    parentEmail: '',
+    favoriteColor: 'purple',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -27,58 +30,109 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate age
+    const age = parseInt(formData.age);
+    if (age < 5 || age > 17) {
+      setError('InstaGem is for kids aged 5-17 years old! 🎈');
+      return;
+    }
+
+    // Require parent email for kids under 13
+    if (age < 13 && !formData.parentEmail) {
+      setError('We need your parent\'s email to keep you safe! 👨‍👩‍👧');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await register(formData.username, formData.email, formData.password, formData.fullName);
+      await register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        childAge: parseInt(formData.age),
+        parentEmail: formData.parentEmail || undefined,
+        favoriteColor: formData.favoriteColor,
+      });
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      setError(err.message || 'Oops! Something went wrong. Try again! 🌟');
     } finally {
       setLoading(false);
     }
   };
 
+  const colors = [
+    { name: 'Purple', value: 'purple', bg: 'bg-purple-500' },
+    { name: 'Blue', value: 'blue', bg: 'bg-blue-500' },
+    { name: 'Pink', value: 'pink', bg: 'bg-pink-500' },
+    { name: 'Green', value: 'green', bg: 'bg-green-500' },
+    { name: 'Orange', value: 'orange', bg: 'bg-orange-500' },
+    { name: 'Yellow', value: 'yellow', bg: 'bg-yellow-500' },
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 animate-fade-in">
-      <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4 animate-slide-in-up">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white">Join InstaGem</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl"
-          >
-            ×
-          </button>
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 bg-opacity-95 flex items-start justify-center z-50 animate-fade-in overflow-y-auto py-4 px-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-6 max-w-lg w-full my-auto animate-slide-in-up shadow-2xl border-2 border-purple-500 max-h-[95vh] overflow-y-auto"
+           style={{ scrollbarWidth: 'thin', scrollbarColor: '#8B5CF6 #1F2937' }}>
+        {/* Close button - repositioned */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition z-10 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center"
+        >
+          ×
+        </button>
+
+        {/* Header with fun emoji */}
+        <div className="text-center mb-4">
+          <div className="text-4xl mb-2">📱✨</div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+            Welcome to InstaGem!
+          </h2>
+          <p className="text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text font-semibold text-xs mt-1">
+            Learn While You Watch! 📚🎬
+          </p>
+          <p className="text-gray-400 text-xs mt-1">
+            Educational reels & safe browsing for kids!
+          </p>
+        </div>
+
+        {/* Trust Badge - Compact */}
+        <div className="mb-4 p-3 bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-400 rounded-xl">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-xl">🛡️</span>
+            <h3 className="text-green-400 font-bold text-xs">Safe & Educational</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-xs text-center">
+            <div>
+              <span className="text-base">📖</span>
+              <p className="text-gray-300 text-xs">Learn Daily</p>
+            </div>
+            <div>
+              <span className="text-base">👨‍👩‍👧</span>
+              <p className="text-gray-300 text-xs">Parent Safe</p>
+            </div>
+            <div>
+              <span className="text-base">🎓</span>
+              <p className="text-gray-300 text-xs">Age-Appropriate</p>
+            </div>
+          </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded text-red-500 text-sm">
+          <div className="mb-4 p-4 bg-red-500 bg-opacity-20 border-2 border-red-400 rounded-xl text-red-300 text-sm flex items-center gap-2">
+            <span className="text-xl">⚠️</span>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Choose a username"
-              required
-              minLength={3}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-300 mb-2">
-              Full Name
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Kid's Name */}
+          <div className="relative">
+            <label htmlFor="fullName" className="block text-xs font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-1">
+              👶 Kid's Name
             </label>
             <input
               type="text"
@@ -86,14 +140,80 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Enter your full name"
+              className="w-full px-3 py-2 bg-gray-800 border-2 border-purple-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition"
+              placeholder="What's your name? ✨"
+              required
             />
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-              Email
+          {/* Age */}
+          <div className="relative">
+            <label htmlFor="age" className="block text-xs font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-1">
+              🎂 How Old Are You?
+            </label>
+            <select
+              id="age"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              className="w-full px-3 py-2 bg-gray-800 border-2 border-blue-500 rounded-xl text-white text-sm focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition"
+              required
+            >
+              <option value="">Pick your age! 🎈</option>
+              {[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map(age => (
+                <option key={age} value={age}>{age} years old</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Parent's Email */}
+          <div className="relative">
+            <label htmlFor="parentEmail" className="block text-xs font-bold text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text mb-1">
+              👨‍👩‍👧 Parent's Email {parseInt(formData.age) < 13 && <span className="text-red-400">*</span>}
+            </label>
+            <input
+              type="email"
+              id="parentEmail"
+              name="parentEmail"
+              value={formData.parentEmail}
+              onChange={handleChange}
+              className="w-full px-3 py-2 bg-gray-800 border-2 border-green-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
+              placeholder="parent@example.com"
+              required={parseInt(formData.age) < 13}
+            />
+            {parseInt(formData.age) < 13 && (
+              <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                <span>🛡️</span>
+                Required for your child's safety and account recovery
+              </p>
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Parents will receive activity updates & educational content tips
+            </p>
+          </div>
+
+          {/* Username */}
+          <div className="relative">
+            <label htmlFor="username" className="block text-xs font-bold text-transparent bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text mb-1">
+              🌟 Choose a Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full px-3 py-2 bg-gray-800 border-2 border-yellow-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition"
+              placeholder="coolkid123"
+              required
+              minLength={3}
+            />
+          </div>
+
+          {/* Email */}
+          <div className="relative">
+            <label htmlFor="email" className="block text-xs font-bold text-transparent bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text mb-1">
+              📧 Your Email
             </label>
             <input
               type="email"
@@ -101,15 +221,16 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Enter your email"
+              className="w-full px-3 py-2 bg-gray-800 border-2 border-pink-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition"
+              placeholder="your.email@example.com"
               required
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-              Password
+          {/* Password */}
+          <div className="relative">
+            <label htmlFor="password" className="block text-xs font-bold text-transparent bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text mb-1">
+              🔒 Create a Secret Password
             </label>
             <input
               type="password"
@@ -117,30 +238,108 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Create a password"
+              className="w-full px-3 py-2 bg-gray-800 border-2 border-purple-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
+              placeholder="Shh... it's a secret! 🤫"
               required
               minLength={6}
             />
           </div>
 
+          {/* Favorite Color Picker */}
+          <div className="relative">
+            <label className="block text-xs font-bold text-transparent bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text mb-2">
+              🎨 Pick Your Favorite Color!
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {colors.map(color => (
+                <button
+                  key={color.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, favoriteColor: color.value })}
+                  className={`${color.bg} py-2 px-3 rounded-lg font-bold text-white text-xs transition transform hover:scale-105 ${
+                    formData.favoriteColor === color.value
+                      ? 'ring-2 ring-white shadow-xl scale-105'
+                      : 'opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  {color.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Educational Benefits */}
+          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400 rounded-xl p-3 mt-2">
+            <h4 className="text-xs font-bold text-blue-300 mb-1 flex items-center gap-1">
+              <span>🌟</span>
+              What Your Kid Will Learn:
+            </h4>
+            <ul className="text-xs text-gray-300 space-y-0.5">
+              <li className="flex items-center gap-1">
+                <span className="text-green-400 text-xs">✓</span>
+                <span>Educational reels - Science, Art, Math & More!</span>
+              </li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-400 text-xs">✓</span>
+                <span>Learn while having fun - Screen time that counts! 📚</span>
+              </li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-400 text-xs">✓</span>
+                <span>Safe environment - No inappropriate content 🛡️</span>
+              </li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-400 text-xs">✓</span>
+                <span>Age-appropriate for {formData.age ? `${formData.age} year olds` : 'your age'}</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 hover:from-purple-600 hover:via-pink-600 hover:to-blue-600 text-white font-bold py-2.5 px-6 rounded-xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg mt-3 flex items-center justify-center gap-2"
           >
-            {loading ? 'Creating account...' : 'Register'}
+            {loading ? (
+              <>
+                <span className="animate-spin">⏳</span>
+                Creating your account...
+              </>
+            ) : (
+              <>
+                <span>🚀</span>
+                Start Learning & Having Fun!
+              </>
+            )}
           </button>
+
+          {/* Trust Message for Parents */}
+          <div className="mt-2 text-center">
+            <p className="text-xs text-gray-500 italic">
+              "Let them watch. They'll learn something new every day!" 📱✨
+            </p>
+          </div>
         </form>
 
-        <div className="mt-6 text-center text-gray-400 text-sm">
-          Already have an account?{' '}
+        {/* Switch to Login */}
+        <div className="mt-4 text-center">
+          <p className="text-gray-400 text-xs">
+            Already have an account? 🌈
+          </p>
           <button
             onClick={onSwitchToLogin}
-            className="text-blue-500 hover:text-blue-400 font-semibold"
+            className="mt-1 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold text-sm hover:from-blue-300 hover:to-purple-300 transition"
           >
-            Login
+            Log In Here! ✨
           </button>
+        </div>
+
+        {/* Fun decorative elements */}
+        <div className="mt-3 flex justify-center gap-2 text-xl opacity-50 pb-2">
+          <span className="animate-bounce" style={{ animationDelay: '0s' }}>🌟</span>
+          <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>💫</span>
+          <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>✨</span>
+          <span className="animate-bounce" style={{ animationDelay: '0.3s' }}>⭐</span>
         </div>
       </div>
     </div>

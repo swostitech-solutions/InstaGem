@@ -8,6 +8,8 @@ import { OptionsIcon } from './icons/OptionsIcon';
 import { VolumeUpIcon } from './icons/VolumeUpIcon';
 import { VolumeOffIcon } from './icons/VolumeOffIcon';
 import { currentUser, userLookup } from '../constants';
+import * as postsAPI from '../api/postsAPI';
+import { useAuth } from '../context/AuthContext';
 
 interface PostProps {
   post: PostType;
@@ -16,13 +18,30 @@ interface PostProps {
 }
 
 export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick }) => {
+  const { isAuthenticated } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes);
   const [isSaved, setIsSaved] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const toggleLike = () => setIsLiked(!isLiked);
+  const toggleLike = async () => {
+    if (!isAuthenticated) {
+      // For non-authenticated users, just toggle locally
+      setIsLiked(!isLiked);
+      setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+      return;
+    }
+
+    try {
+      await postsAPI.likePost(post.id);
+      setIsLiked(!isLiked);
+      setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
+  };
   const toggleSave = () => setIsSaved(!isSaved);
   const toggleMute = () => {
     if (videoRef.current) {
@@ -177,7 +196,7 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick
 
       {/* Post Info */}
       <div className="px-3 pb-4 text-sm">
-        <p className="font-semibold">{isLiked ? post.likes + 1 : post.likes} likes</p>
+        <p className="font-semibold">{likesCount} likes</p>
         <p className="mt-1 whitespace-pre-wrap">
             <button onClick={() => onProfileClick(post.user)} className="font-semibold">{post.user.username}</button>
           <span className="ml-2">{renderCaption(post.caption)}</span>

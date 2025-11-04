@@ -22,79 +22,128 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSwitchToRegis
       await login(email, password);
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      const errorMsg = err.message || 'Login failed';
+      if (errorMsg.includes('Invalid credentials')) {
+        setError('Invalid email or password. 🔐 Try creating a new account if you don\'t have one yet!');
+      } else {
+        setError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 animate-fade-in">
-      <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4 animate-slide-in-up">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white">Login to InstaGem</h2>
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 bg-opacity-95 flex items-center justify-center z-50 animate-fade-in overflow-y-auto py-8">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in-up shadow-2xl border-2 border-blue-500">
+        {/* Header with fun emoji */}
+        <div className="text-center mb-6">
+          <div className="text-6xl mb-3 animate-bounce">�📱</div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Welcome Back!
+          </h2>
+          <p className="text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text font-semibold text-sm mt-2">
+            Continue Your Learning Journey! 🌈
+          </p>
+          <p className="text-gray-400 text-xs mt-1">
+            Watch, Learn, and Grow Every Day! 📚✨
+          </p>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl"
+            className="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl transition"
           >
             ×
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded text-red-500 text-sm">
+          <div className="mb-4 p-4 bg-red-500 bg-opacity-20 border-2 border-red-400 rounded-xl text-red-300 text-sm flex items-center gap-2">
+            <span className="text-xl">⚠️</span>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-              Email
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email Input */}
+          <div className="relative">
+            <label htmlFor="email" className="block text-sm font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-2">
+              📧 Your Email
             </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Enter your email"
+              className="w-full px-4 py-3 bg-gray-800 border-2 border-blue-500 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400 transition"
+              placeholder="your.email@example.com"
               required
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-              Password
+          {/* Password Input */}
+          <div className="relative">
+            <label htmlFor="password" className="block text-sm font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-2">
+              🔐 Password
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Enter your password"
+              className="w-full px-4 py-3 bg-gray-800 border-2 border-purple-500 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400 transition"
+              placeholder="Your secret password"
               required
             />
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg flex items-center justify-center gap-2"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? (
+              <>
+                <span className="animate-spin">⏳</span>
+                Logging in...
+              </>
+            ) : (
+              <>
+                <span>🚀</span>
+                Start Learning!
+              </>
+            )}
           </button>
+
+          {/* Educational reminder */}
+          <div className="mt-3 text-center">
+            <p className="text-xs text-gray-400 italic flex items-center justify-center gap-1">
+              <span>📚</span>
+              <span>New educational reels waiting for you!</span>
+              <span>🎬</span>
+            </p>
+          </div>
         </form>
 
-        <div className="mt-6 text-center text-gray-400 text-sm">
-          Don't have an account?{' '}
+        {/* Switch to Register */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-400 text-sm">
+            New to InstaGem? 🌈
+          </p>
           <button
             onClick={onSwitchToRegister}
-            className="text-blue-500 hover:text-blue-400 font-semibold"
+            className="mt-2 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold hover:from-blue-300 hover:to-purple-300 transition"
           >
-            Register
+            Create Your Account! ✨
           </button>
+        </div>
+
+        {/* Fun decorative elements */}
+        <div className="mt-6 flex justify-center gap-3 text-2xl opacity-50">
+          <span className="animate-bounce" style={{ animationDelay: '0s' }}>⭐</span>
+          <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>💫</span>
+          <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>✨</span>
+          <span className="animate-bounce" style={{ animationDelay: '0.3s' }}>🌟</span>
         </div>
       </div>
     </div>

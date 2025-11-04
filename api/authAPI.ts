@@ -5,6 +5,9 @@ export interface RegisterData {
   email: string;
   password: string;
   fullName?: string;
+  childAge?: number;
+  parentEmail?: string;
+  favoriteColor?: string;
 }
 
 export interface LoginData {

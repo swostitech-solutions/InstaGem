@@ -13,7 +13,7 @@ const generateToken = (id) => {
 // @access  Public
 export const register = async (req, res) => {
   try {
-    const { username, email, password, fullName } = req.body;
+    const { username, email, password, fullName, childAge, parentEmail, favoriteColor } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
@@ -31,6 +31,9 @@ export const register = async (req, res) => {
       email,
       password,
       fullName: fullName || username,
+      childAge,
+      parentEmail,
+      favoriteColor: favoriteColor || 'purple',
     });
 
     if (user) {
@@ -53,6 +56,9 @@ export const register = async (req, res) => {
           fullName: user.fullName,
           avatarUrl: user.avatarUrl,
           bio: user.bio,
+          childAge: user.childAge,
+          parentEmail: user.parentEmail,
+          favoriteColor: user.favoriteColor,
           token,
         },
       });
@@ -112,6 +118,9 @@ export const login = async (req, res) => {
         fullName: user.fullName,
         avatarUrl: user.avatarUrl,
         bio: user.bio,
+        childAge: user.childAge,
+        parentEmail: user.parentEmail,
+        favoriteColor: user.favoriteColor,
         token,
       },
     });
@@ -155,6 +164,9 @@ export const getMe = async (req, res) => {
         fullName: user.fullName,
         avatarUrl: user.avatarUrl,
         bio: user.bio,
+        childAge: user.childAge,
+        parentEmail: user.parentEmail,
+        favoriteColor: user.favoriteColor,
         followers: user.followers.length,
         following: user.following.length,
       },

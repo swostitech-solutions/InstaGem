@@ -12,6 +12,8 @@ import { ReelsView } from './components/ReelsView';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { SearchView } from './components/SearchView';
 import { ProfileView } from './components/ProfileView';
+import * as postsAPI from './api/postsAPI';
+import { useAuth } from './context/AuthContext';
 
 export type ActiveTab = 'home' | 'search' | 'reels' | 'shop' | 'profile';
 
@@ -46,7 +48,8 @@ const generateExplorePosts = (startIndex: number, count: number): PostType[] => 
 
 
 const App: React.FC = () => {
-  const [posts, setPosts] = useState<PostType[]>(initialPosts);
+  const { user, isAuthenticated } = useAuth();
+  const [posts, setPosts] = useState<PostType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewingStory, setViewingStory] = useState<Story | null>(null);
   const [commentingPost, setCommentingPost] = useState<PostType | null>(null);
@@ -55,13 +58,66 @@ const App: React.FC = () => {
   const [explorePosts, setExplorePosts] = useState<PostType[]>([]);
   const [isLoadingExplore, setIsLoadingExplore] = useState(false);
   const [viewingProfile, setViewingProfile] = useState<User | null>(null);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Fetch posts from API
+  const fetchPosts = useCallback(async (page: number = 1) => {
+    if (!isAuthenticated) {
+      setPosts(initialPosts); // Use mock data if not authenticated
+      setIsLoadingPosts(false);
+      return;
+    }
+
+    try {
+      setIsLoadingPosts(true);
+      const response = await postsAPI.getPosts(page, 10);
+      const apiPosts = response.data.map((post: any) => ({
+        id: post._id,
+        user: {
+          username: post.user.username,
+          avatarUrl: post.user.avatarUrl,
+          fullName: post.user.fullName,
+          bio: post.user.bio || '',
+          followers: post.user.followers?.length || 0,
+          following: post.user.following?.length || 0,
+        },
+        mediaUrl: post.imageUrl,
+        mediaType: post.mediaType || 'image',
+        caption: post.caption,
+        likes: post.likes?.length || 0,
+        comments: post.comments?.map((c: any) => ({
+          user: c.user?.username || 'Anonymous',
+          text: c.text,
+        })) || [],
+        timestamp: new Date(post.createdAt).toLocaleDateString(),
+      }));
+
+      if (page === 1) {
+        setPosts(apiPosts);
+      } else {
+        setPosts(prev => [...prev, ...apiPosts]);
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      // Fallback to mock data on error
+      if (page === 1) {
+        setPosts(initialPosts);
+      }
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  }, [isAuthenticated]);
+
+  // Load posts on mount and when auth changes
+  useEffect(() => {
+    fetchPosts(1);
+  }, [fetchPosts]);
 
   const handleAddPost = useCallback((newPost: Omit<PostType, 'id'>) => {
-    setPosts(prevPosts => [
-      { ...newPost, id: Date.now().toString() },
-      ...prevPosts,
-    ]);
-  }, []);
+    // Refresh posts after adding new one
+    fetchPosts(1);
+  }, [fetchPosts]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
@@ -75,60 +131,66 @@ const App: React.FC = () => {
     setCommentingPost(null);
   };
 
-  const handleAddComment = (postId: string, commentText: string) => {
+  const handleAddComment = async (postId: string, commentText: string) => {
     if (!commentText.trim()) return;
 
-    const newComment = { user: currentUser.username, text: commentText };
+    try {
+      if (isAuthenticated && user) {
+        // Add comment via API
+        await postsAPI.addComment(postId, commentText);
+        
+        // Update local state
+        const newComment = { user: user.username, text: commentText };
 
-    const updatePostWithComment = (p: PostType) => ({
-      ...p,
-      comments: [...p.comments, newComment],
-    });
+        const updatePostWithComment = (p: PostType) => ({
+          ...p,
+          comments: [...p.comments, newComment],
+        });
 
-    setPosts(prevPosts =>
-      prevPosts.map(p => (p.id === postId ? updatePostWithComment(p) : p))
-    );
+        setPosts(prevPosts =>
+          prevPosts.map(p => (p.id === postId ? updatePostWithComment(p) : p))
+        );
 
-    setCommentingPost(prevPost =>
-      prevPost && prevPost.id === postId ? updatePostWithComment(prevPost) : prevPost
-    );
+        setCommentingPost(prevPost =>
+          prevPost && prevPost.id === postId ? updatePostWithComment(prevPost) : prevPost
+        );
+      } else {
+        // Fallback for non-authenticated users (mock data)
+        const newComment = { user: currentUser.username, text: commentText };
+
+        const updatePostWithComment = (p: PostType) => ({
+          ...p,
+          comments: [...p.comments, newComment],
+        });
+
+        setPosts(prevPosts =>
+          prevPosts.map(p => (p.id === postId ? updatePostWithComment(p) : p))
+        );
+
+        setCommentingPost(prevPost =>
+          prevPost && prevPost.id === postId ? updatePostWithComment(prevPost) : prevPost
+        );
+      }
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
   };
 
   const loadMorePosts = useCallback(async () => {
-    if (isLoadingMore) return;
+    if (isLoadingMore || !isAuthenticated) return;
 
     setIsLoadingMore(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const newPosts: PostType[] = Array.from({ length: 3 }).map((_, index) => {
-      const postIndex = posts.length + index + 1;
-      const isVideo = Math.random() > 0.7; // 30% chance of being a video
-      return {
-        id: `p${postIndex}`,
-        user: { 
-            username: `user_${postIndex}`, 
-            avatarUrl: `https://picsum.photos/seed/${postIndex}/100/100`,
-            fullName: `User ${postIndex}`,
-            bio: 'Just another user enjoying the feed.',
-            followers: Math.floor(Math.random() * 1000),
-            following: Math.floor(Math.random() * 200),
-        },
-        mediaUrl: isVideo 
-            ? 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' 
-            : `https://picsum.photos/seed/${100 + postIndex}/600/800`,
-        mediaType: isVideo ? 'video' : 'image',
-        caption: `This is a dynamically loaded post #${postIndex}. Enjoy the view!`,
-        likes: Math.floor(Math.random() * 2000),
-        comments: [],
-        timestamp: 'Just now',
-      };
-    });
-
-    setPosts(prevPosts => [...prevPosts, ...newPosts]);
-    setIsLoadingMore(false);
-}, [isLoadingMore, posts.length]);
+    try {
+      const nextPage = currentPage + 1;
+      await fetchPosts(nextPage);
+      setCurrentPage(nextPage);
+    } catch (error) {
+      console.error('Error loading more posts:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+}, [isLoadingMore, currentPage, fetchPosts, isAuthenticated]);
 
 const loadMoreExplorePosts = useCallback(async () => {
   if (isLoadingExplore) return;
@@ -197,8 +259,14 @@ const handleTabChange = (tab: ActiveTab) => {
         return (
           <>
             <StoryTray stories={stories} onStoryClick={handleStoryClick} />
-            <Feed posts={posts} onOpenComments={handleOpenComments} onProfileClick={handleProfileClick} />
-            {isLoadingMore && <LoadingSpinner />}
+            {isLoadingPosts && posts.length === 0 ? (
+              <LoadingSpinner />
+            ) : (
+              <>
+                <Feed posts={posts} onOpenComments={handleOpenComments} onProfileClick={handleProfileClick} />
+                {isLoadingMore && <LoadingSpinner />}
+              </>
+            )}
           </>
         );
       case 'reels':

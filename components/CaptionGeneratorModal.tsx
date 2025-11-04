@@ -3,6 +3,9 @@ import { generateCaption } from '../services/geminiService';
 import type { Post } from '../types';
 import { currentUser } from '../constants';
 import { UserSuggestions } from './UserSuggestions';
+import * as uploadAPI from '../api/uploadAPI';
+import * as postsAPI from '../api/postsAPI';
+import { useAuth } from '../context/AuthContext';
 
 interface CaptionGeneratorModalProps {
   onClose: () => void;
@@ -23,10 +26,12 @@ const fileToBase64 = (file: File): Promise<string> =>
 
 
 export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ onClose, onPostCreated }) => {
+  const { user, isAuthenticated } = useAuth();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [suggestionQuery, setSuggestionQuery] = useState<string | null>(null);
 
@@ -81,18 +86,59 @@ export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ on
     }
   };
 
-  const handlePost = () => {
-    if (!imagePreview) return;
-    onPostCreated({
-      user: currentUser,
-      mediaUrl: imagePreview,
-      mediaType: 'image',
-      caption,
-      likes: 0,
-      comments: [],
-      timestamp: 'Just now',
-    });
-    onClose();
+  const handlePost = async () => {
+    if (!imageFile || !imagePreview) return;
+
+    if (!isAuthenticated || !user) {
+      // For non-authenticated users, just create local post
+      onPostCreated({
+        user: currentUser,
+        mediaUrl: imagePreview,
+        mediaType: 'image',
+        caption,
+        likes: 0,
+        comments: [],
+        timestamp: 'Just now',
+      });
+      onClose();
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setError(null);
+
+      // Upload image to Cloudinary
+      const imageUrl = await uploadAPI.uploadImage(imageFile);
+
+      // Create post via API
+      await postsAPI.createPost({ imageUrl, caption, mediaType: 'image' });
+
+      // Notify parent to refresh posts
+      onPostCreated({
+        user: {
+          username: user.username,
+          avatarUrl: user.avatarUrl,
+          fullName: user.fullName,
+          bio: user.bio || '',
+          followers: 0,
+          following: 0,
+        },
+        mediaUrl: imageUrl,
+        mediaType: 'image',
+        caption,
+        likes: 0,
+        comments: [],
+        timestamp: 'Just now',
+      });
+
+      onClose();
+    } catch (err) {
+      console.error('Error creating post:', err);
+      setError('Failed to create post. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -148,10 +194,10 @@ export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ on
         <footer className="p-4 border-t border-gray-700 mt-auto">
             <button
                 onClick={handlePost}
-                disabled={!imagePreview || caption.length === 0}
+                disabled={!imagePreview || caption.length === 0 || isUploading}
                 className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-md hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
               >
-                Share
+                {isUploading ? '⏳ Uploading...' : 'Share'}
               </button>
         </footer>
       </div>

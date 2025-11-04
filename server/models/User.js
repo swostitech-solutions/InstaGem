@@ -30,6 +30,21 @@ const userSchema = new mongoose.Schema(
       default: '',
       maxlength: [50, 'Full name cannot exceed 50 characters'],
     },
+    childAge: {
+      type: Number,
+      min: [1, 'Age must be at least 1'],
+      max: [17, 'Age cannot exceed 17'],
+    },
+    parentEmail: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid parent email'],
+    },
+    favoriteColor: {
+      type: String,
+      default: 'purple',
+    },
     avatarUrl: {
       type: String,
       default: 'https://picsum.photos/seed/default/100/100',
