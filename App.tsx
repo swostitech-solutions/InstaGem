@@ -15,6 +15,7 @@ import { SearchView } from './components/SearchView';
 import { ProfileView } from './components/ProfileView';
 import * as postsAPI from './api/postsAPI';
 import { useAuth } from './context/AuthContext';
+import WelcomeMessage from './src/components/WelcomeMessage';
 
 export type ActiveTab = 'home' | 'search' | 'reels' | 'shop' | 'profile';
 
@@ -265,6 +266,7 @@ const handleTabChange = (tab: ActiveTab) => {
 
   return (
     <div className="bg-black text-white min-h-screen font-sans">
+      <WelcomeMessage />
       <div className="max-w-md mx-auto relative pb-16">
         <Header 
             onAddClick={() => {}} // No-op since we removed upload
