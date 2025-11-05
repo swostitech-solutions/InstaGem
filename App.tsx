@@ -16,6 +16,7 @@ import { ProfileView } from './components/ProfileView';
 import * as postsAPI from './api/postsAPI';
 import { useAuth } from './context/AuthContext';
 import WelcomeMessage from './src/components/WelcomeMessage';
+import AuthModal from './components/AuthModal';
 
 export type ActiveTab = 'home' | 'search' | 'reels' | 'shop' | 'profile';
 
@@ -50,7 +51,7 @@ const generateExplorePosts = (startIndex: number, count: number): PostType[] => 
 
 
 const App: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [viewingStory, setViewingStory] = useState<Story | null>(null);
   const [commentingPost, setCommentingPost] = useState<PostType | null>(null);
@@ -89,8 +90,10 @@ const App: React.FC = () => {
 
   // Load posts on mount and when auth changes
   useEffect(() => {
-    fetchPosts(1);
-  }, [fetchPosts]);
+    if (isAuthenticated) {
+      fetchPosts(1);
+    }
+  }, [fetchPosts, isAuthenticated]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
@@ -263,6 +266,27 @@ const handleTabChange = (tab: ActiveTab) => {
     }
   };
 
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading your amazing content...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login modal if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-black min-h-screen">
+        <AuthModal />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black text-white min-h-screen font-sans">
