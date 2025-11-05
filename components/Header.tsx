@@ -27,6 +27,10 @@ export const Header: React.FC<HeaderProps> = ({
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
+  // Debug: Log user info
+  console.log('Header - User:', user);
+  console.log('Header - isAdmin:', user?.isAdmin);
+
   return (
     <>
       <header className="sticky top-0 bg-black z-10 px-4 py-3 border-b border-gray-800">
