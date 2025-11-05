@@ -28,9 +28,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ user, posts }) => {
                     className="w-20 h-20 rounded-full object-cover"
                 />
                 <div className="flex items-center space-x-8">
-                    <StatItem value={posts.length} label="Posts" />
                     <StatItem value={user.followers} label="Followers" />
-                    <StatItem value={user.following} label="Following" />
+                    <StatItem value={user.likedVideos?.length || 0} label="Liked" />
                 </div>
             </div>
             <div className="mt-4">

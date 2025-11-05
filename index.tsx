@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext';
 import { TermsOfService } from './components/legal/TermsOfService';
 import { PrivacyPolicy } from './components/legal/PrivacyPolicy';
 import { ContentGuidelines } from './components/legal/ContentGuidelines';
+import AdminDashboard from './components/AdminDashboard';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -20,6 +21,7 @@ root.render(
       <AuthProvider>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/content-guidelines" element={<ContentGuidelines />} />

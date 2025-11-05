@@ -6,6 +6,9 @@ export interface User {
   bio: string;
   followers: number;
   following: number;
+  isAdmin?: boolean;
+  childAge?: number;
+  likedVideos?: string[];
 }
 
 export interface Story extends User {

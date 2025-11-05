@@ -13,9 +13,11 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import { SearchView } from './components/SearchView';
 import { ProfileView } from './components/ProfileView';
 import * as postsAPI from './api/postsAPI';
+import * as videosAPI from './api/videosAPI';
 import { useAuth } from './context/AuthContext';
 import WelcomeMessage from './src/components/WelcomeMessage';
 import AuthModal from './components/AuthModal';
+import AdminDashboard from './components/AdminDashboard';
 
 export type ActiveTab = 'home' | 'search' | 'reels' | 'shop' | 'profile';
 
@@ -67,14 +69,38 @@ const App: React.FC = () => {
     try {
       setIsLoadingPosts(true);
       
-      // TODO: Fetch from API when admin portal is ready
-      // const response = await postsAPI.getFeedPosts(page, 6);
-      // setPosts(response.data);
+      // Fetch videos from API based on user's age
+      const response = await videosAPI.getVideos(undefined, page);
       
-      // For now, show empty feed
-      setPosts([]);
+      // Transform video data to match Post interface
+      const videoPosts = response.data.map((video: any) => ({
+        id: video._id,
+        user: {
+          username: video.uploadedBy?.username || 'instagem',
+          avatarUrl: video.uploadedBy?.avatarUrl || 'https://ui-avatars.com/api/?name=InstaGem&background=9333EA&color=fff',
+          fullName: video.uploadedBy?.fullName || 'InstaGem Education',
+          bio: 'Educational content for kids 📚',
+          followers: 1000000,
+          following: 0,
+        },
+        mediaUrl: video.videoUrl,
+        mediaType: 'video' as const,
+        caption: `📚 ${video.title}\n\n${video.description}\n\n🎯 Ages ${video.ageGroup} | ${video.category}`,
+        likes: video.likes?.length || 0,
+        comments: video.comments?.map((c: any) => ({
+          user: c.user?.username || 'user',
+          text: c.text
+        })) || [],
+        timestamp: new Date(video.publishedAt || video.createdAt).toLocaleDateString(),
+      }));
+
+      if (page === 1) {
+        setPosts(videoPosts);
+      } else {
+        setPosts(prev => [...prev, ...videoPosts]);
+      }
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error('Error fetching videos:', error);
       setPosts([]);
     } finally {
       setIsLoadingPosts(false);
