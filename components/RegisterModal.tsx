@@ -33,8 +33,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
     // Validate age
     const age = parseInt(formData.age);
-    if (age < 5 || age > 17) {
-      setError('InstaGem is for kids aged 5-17 years old! 🎈');
+    if (age < 1 || age > 17) {
+      setError('InstaGem is for kids aged 1-17 years old! 🎈');
       return;
     }
 
@@ -160,8 +160,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               required
             >
               <option value="">Pick your age! 🎈</option>
-              {[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map(age => (
-                <option key={age} value={age}>{age} years old</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map(age => (
+                <option key={age} value={age}>{age} {age === 1 ? 'year old' : 'years old'}</option>
               ))}
             </select>
           </div>
