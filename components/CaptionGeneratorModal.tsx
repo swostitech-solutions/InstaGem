@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { generateCaption } from '../services/geminiService';
 import type { Post } from '../types';
-import { currentUser } from '../constants';
 import { UserSuggestions } from './UserSuggestions';
 import * as uploadAPI from '../api/uploadAPI';
 import * as postsAPI from '../api/postsAPI';
@@ -92,7 +91,14 @@ export const CaptionGeneratorModal: React.FC<CaptionGeneratorModalProps> = ({ on
     if (!isAuthenticated || !user) {
       // For non-authenticated users, just create local post
       onPostCreated({
-        user: currentUser,
+        user: {
+          username: 'guest',
+          avatarUrl: 'https://picsum.photos/seed/default/100/100',
+          fullName: 'Guest User',
+          bio: '',
+          followers: 0,
+          following: 0,
+        },
         mediaUrl: imagePreview,
         mediaType: 'image',
         caption,

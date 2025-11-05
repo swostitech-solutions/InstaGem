@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Post as PostType } from '../types';
 import { CloseIcon } from './icons/CloseIcon';
-import { currentUser } from '../constants';
+import { useAuth } from '../context/AuthContext';
 import { UserSuggestions } from './UserSuggestions';
 
 interface CommentModalProps {
@@ -11,6 +11,7 @@ interface CommentModalProps {
 }
 
 export const CommentModal: React.FC<CommentModalProps> = ({ post, onClose, onAddComment }) => {
+    const { user } = useAuth();
     const [commentText, setCommentText] = useState('');
     const [suggestionQuery, setSuggestionQuery] = useState<string | null>(null);
     const commentsContainerRef = useRef<HTMLDivElement>(null);
@@ -103,13 +104,13 @@ export const CommentModal: React.FC<CommentModalProps> = ({ post, onClose, onAdd
                         />
                     )}
                     <div className="flex items-center space-x-2">
-                        <img src={currentUser.avatarUrl} alt="Your avatar" className="w-9 h-9 rounded-full" />
+                        <img src={user?.avatarUrl || 'https://picsum.photos/seed/default/100/100'} alt="Your avatar" className="w-9 h-9 rounded-full" />
                         <input
                             ref={inputRef}
                             type="text"
                             value={commentText}
                             onChange={handleCommentChange}
-                            placeholder={`Comment as ${currentUser.username}...`}
+                            placeholder={`Comment as ${user?.username || 'guest'}...`}
                             className="flex-grow bg-gray-800 border-none rounded-full px-4 py-2 focus:ring-0 outline-none placeholder-gray-500"
                             autoFocus
                         />

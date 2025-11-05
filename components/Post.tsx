@@ -7,7 +7,7 @@ import { SaveIcon } from './icons/SaveIcon';
 import { OptionsIcon } from './icons/OptionsIcon';
 import { VolumeUpIcon } from './icons/VolumeUpIcon';
 import { VolumeOffIcon } from './icons/VolumeOffIcon';
-import { currentUser, userLookup } from '../constants';
+import { userLookup } from '../constants';
 import * as postsAPI from '../api/postsAPI';
 import { useAuth } from '../context/AuthContext';
 
@@ -18,7 +18,7 @@ interface PostProps {
 }
 
 export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [isSaved, setIsSaved] = useState(false);
@@ -207,7 +207,7 @@ export const Post: React.FC<PostProps> = ({ post, onOpenComments, onProfileClick
             </button>
         )}
         <div className="flex items-center space-x-2 mt-2">
-            <img src={currentUser.avatarUrl} alt="Your avatar" className="w-6 h-6 rounded-full" />
+            <img src={user?.avatarUrl || 'https://picsum.photos/seed/default/100/100'} alt="Your avatar" className="w-6 h-6 rounded-full" />
             <button onClick={() => onOpenComments(post)} className="text-gray-500 text-left flex-grow">
                 Add a comment...
             </button>

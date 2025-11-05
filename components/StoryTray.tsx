@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Story } from '../types';
 import { AddIcon } from './icons/AddIcon';
-import { currentUser } from '../constants';
+import { useAuth } from '../context/AuthContext';
 
 interface StoryTrayProps {
   stories: Story[];
@@ -23,14 +23,14 @@ const StoryItem: React.FC<{ story: Story; onClick: () => void }> = ({ story, onC
   </button>
 );
 
-const YourStory: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+const YourStory: React.FC<{ onClick: () => void; user: any }> = ({ onClick, user }) => (
     <button onClick={onClick} className="flex-shrink-0 flex flex-col items-center space-y-1 w-20 relative text-left">
       <div className="rounded-full p-0.5">
         <div className="bg-black rounded-full p-0.5">
           <img
             className="w-16 h-16 rounded-full object-cover"
-            src={currentUser.avatarUrl}
-            alt={currentUser.username}
+            src={user?.avatarUrl || 'https://picsum.photos/seed/default/100/100'}
+            alt={user?.username || 'You'}
           />
         </div>
       </div>
@@ -42,10 +42,12 @@ const YourStory: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   );
 
 export const StoryTray: React.FC<StoryTrayProps> = ({ stories, onStoryClick }) => {
+  const { user } = useAuth();
+  
   return (
     <div className="px-4 py-3 border-b border-gray-800">
       <div className="flex space-x-4 overflow-x-auto pb-2 -mb-2">
-        <YourStory onClick={() => onStoryClick(currentUser)} />
+        {user && <YourStory user={user} onClick={() => onStoryClick({...user, id: 'current_user', followers: user.followers || 0, following: user.following || 0})} />}
         {stories.map((story) => (
           <StoryItem key={story.id} story={story} onClick={() => onStoryClick(story)} />
         ))}

@@ -4,7 +4,7 @@ import { Feed } from './components/Feed';
 import { StoryTray } from './components/StoryTray';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
-import { stories, initialPosts, currentUser } from './constants';
+import { stories, initialPosts } from './constants';
 import type { Post as PostType, Story, User } from './types';
 import { StoryViewer } from './components/StoryViewer';
 import { CommentModal } from './components/CommentModal';
@@ -151,7 +151,7 @@ const App: React.FC = () => {
         );
       } else {
         // Fallback for non-authenticated users (mock data)
-        const newComment = { user: currentUser.username, text: commentText };
+        const newComment = { user: user?.username || 'anonymous', text: commentText };
 
         const updatePostWithComment = (p: PostType) => ({
           ...p,
@@ -214,7 +214,15 @@ const handleBackFromProfile = () => {
 };
 
 const handleTabChange = (tab: ActiveTab) => {
-    setViewingProfile(tab === 'profile' ? currentUser : null);
+    if (tab === 'profile' && user) {
+      setViewingProfile({
+        ...user,
+        followers: user.followers || 0,
+        following: user.following || 0,
+      });
+    } else {
+      setViewingProfile(null);
+    }
     setActiveTab(tab);
 };
 
@@ -316,7 +324,7 @@ const handleTabChange = (tab: ActiveTab) => {
             isProfileView={!!viewingProfile}
             profileUsername={viewingProfile?.username}
             onBackClick={handleBackFromProfile}
-            isCurrentUserProfile={viewingProfile?.username === currentUser.username}
+            isCurrentUserProfile={viewingProfile?.username === user?.username}
         />
         {renderContent()}
         <Footer />

@@ -13,6 +13,8 @@ interface User {
   favoriteColor?: string;
   isAdmin?: boolean;
   likedVideos?: string[];
+  followers?: number;
+  following?: number;
 }
 
 interface RegisterData {

@@ -3,7 +3,7 @@ import { HomeIcon } from './icons/HomeIcon';
 import { SearchIcon } from './icons/SearchIcon';
 import { ReelsIcon } from './icons/ReelsIcon';
 import { ShopIcon } from './icons/ShopIcon';
-import { currentUser } from '../constants';
+import { useAuth } from '../context/AuthContext';
 import type { ActiveTab } from '../App';
 
 interface BottomNavProps {
@@ -12,6 +12,8 @@ interface BottomNavProps {
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) => {
+  const { user } = useAuth();
+  
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-10">
       <div className="max-w-md mx-auto flex justify-around items-center h-12">
@@ -29,7 +31,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
         </button>
         <button aria-label="Profile" onClick={() => onTabChange('profile')}>
           <img
-            src={currentUser.avatarUrl}
+            src={user?.avatarUrl || 'https://picsum.photos/seed/default/100/100'}
             alt="Profile"
             className={`w-6 h-6 rounded-full object-cover border-2 transition-colors ${activeTab === 'profile' ? 'border-white' : 'border-transparent'}`}
           />
