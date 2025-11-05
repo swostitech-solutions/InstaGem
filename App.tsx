@@ -5,7 +5,6 @@ import { StoryTray } from './components/StoryTray';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
 import { stories, initialPosts, currentUser } from './constants';
-import { educationalPosts } from './educationalContent';
 import type { Post as PostType, Story, User } from './types';
 import { StoryViewer } from './components/StoryViewer';
 import { CommentModal } from './components/CommentModal';
@@ -63,26 +62,20 @@ const App: React.FC = () => {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Load educational posts
+  // Fetch posts from API (admin uploaded videos)
   const fetchPosts = useCallback(async (page: number = 1) => {
     try {
       setIsLoadingPosts(true);
       
-      // Always use educational content for kids
-      const startIndex = (page - 1) * 6;
-      const endIndex = startIndex + 6;
-      const postsToShow = educationalPosts.slice(startIndex, endIndex);
-
-      if (page === 1) {
-        setPosts(postsToShow);
-      } else {
-        setPosts(prev => [...prev, ...postsToShow]);
-      }
+      // TODO: Fetch from API when admin portal is ready
+      // const response = await postsAPI.getFeedPosts(page, 6);
+      // setPosts(response.data);
+      
+      // For now, show empty feed
+      setPosts([]);
     } catch (error) {
       console.error('Error fetching posts:', error);
-      if (page === 1) {
-        setPosts(educationalPosts.slice(0, 6));
-      }
+      setPosts([]);
     } finally {
       setIsLoadingPosts(false);
     }
