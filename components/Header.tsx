@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { AddIcon } from './icons/AddIcon';
 import { HeartIcon } from './icons/HeartIcon';
 import { MessengerIcon } from './icons/MessengerIcon';
+import { SettingsIcon } from './icons/SettingsIcon';
 import { Logo } from './icons/Logo';
 import { BackIcon } from './icons/BackIcon';
 import { useAuth } from '../context/AuthContext';
 import { LoginModal } from './LoginModal';
 import { RegisterModal } from './RegisterModal';
+import { ProfileSettings } from './ProfileSettings';
 
 interface HeaderProps {
   onAddClick: () => void;
@@ -26,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   const { isAuthenticated, user, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Debug: Log user info
   console.log('Header - User:', user);
@@ -61,6 +64,13 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
                   </>
                 )}
+                <button
+                  onClick={() => setShowSettings(true)}
+                  aria-label="Settings"
+                  className="hover:opacity-70 transition"
+                >
+                  <SettingsIcon className="w-6 h-6" />
+                </button>
                 {user?.isAdmin && (
                   <a
                     href="/admin"
@@ -69,13 +79,6 @@ export const Header: React.FC<HeaderProps> = ({
                     Admin
                   </a>
                 )}
-                <button
-                  onClick={logout}
-                  className="text-sm text-gray-400 hover:text-white"
-                  aria-label="Logout"
-                >
-                  Logout
-                </button>
               </>
             ) : (
               <>
@@ -115,6 +118,10 @@ export const Header: React.FC<HeaderProps> = ({
             setShowLogin(true);
           }}
         />
+      )}
+
+      {showSettings && (
+        <ProfileSettings onClose={() => setShowSettings(false)} />
       )}
     </>
   );
