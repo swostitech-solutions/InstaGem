@@ -1,8 +1,12 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { TermsOfService } from './components/legal/TermsOfService';
+import { PrivacyPolicy } from './components/legal/PrivacyPolicy';
+import { ContentGuidelines } from './components/legal/ContentGuidelines';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,8 +16,15 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/content-guidelines" element={<ContentGuidelines />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
