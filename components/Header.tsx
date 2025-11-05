@@ -57,6 +57,14 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
                   </>
                 )}
+                {user?.isAdmin && (
+                  <a
+                    href="/admin"
+                    className="text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded font-semibold hover:opacity-90"
+                  >
+                    Admin
+                  </a>
+                )}
                 <button
                   onClick={logout}
                   className="text-sm text-gray-400 hover:text-white"

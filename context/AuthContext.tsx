@@ -11,6 +11,8 @@ interface User {
   childAge?: number;
   parentEmail?: string;
   favoriteColor?: string;
+  isAdmin?: boolean;
+  likedVideos?: string[];
 }
 
 interface RegisterData {
