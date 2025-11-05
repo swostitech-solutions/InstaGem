@@ -121,6 +121,7 @@ export const login = async (req, res) => {
         childAge: user.childAge,
         parentEmail: user.parentEmail,
         favoriteColor: user.favoriteColor,
+        isAdmin: user.isAdmin || false,
         token,
       },
     });
@@ -167,6 +168,7 @@ export const getMe = async (req, res) => {
         childAge: user.childAge,
         parentEmail: user.parentEmail,
         favoriteColor: user.favoriteColor,
+        isAdmin: user.isAdmin || false,
         followers: user.followers.length,
         following: user.following.length,
       },
