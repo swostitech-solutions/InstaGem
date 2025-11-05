@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import * as adminAPI from '../api/adminAPI';
-import VideoUploadForm from './VideoUploadForm';
+
+// Dynamic import to avoid build errors
+const VideoUploadForm = React.lazy(() => import('./VideoUploadForm'));
 
 interface Video {
   _id: string;
@@ -109,10 +111,12 @@ const AdminDashboard: React.FC = () => {
 
         {/* Upload Form Modal */}
         {showUploadForm && (
-          <VideoUploadForm
-            onClose={() => setShowUploadForm(false)}
-            onSuccess={handleUploadSuccess}
-          />
+          <React.Suspense fallback={<div className="text-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div></div>}>
+            <VideoUploadForm
+              onClose={() => setShowUploadForm(false)}
+              onSuccess={handleUploadSuccess}
+            />
+          </React.Suspense>
         )}
 
         {/* Filters */}
