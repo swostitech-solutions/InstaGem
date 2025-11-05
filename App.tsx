@@ -4,7 +4,7 @@ import { Feed } from './components/Feed';
 import { StoryTray } from './components/StoryTray';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
-import { stories, initialPosts } from './constants';
+import { initialPosts } from './constants';
 import type { Post as PostType, Story, User } from './types';
 import { StoryViewer } from './components/StoryViewer';
 import { CommentModal } from './components/CommentModal';
@@ -261,7 +261,7 @@ const handleTabChange = (tab: ActiveTab) => {
       case 'home':
         return (
           <>
-            <StoryTray stories={stories} onStoryClick={handleStoryClick} />
+            <StoryTray stories={[]} onStoryClick={handleStoryClick} />
             {isLoadingPosts && posts.length === 0 ? (
               <LoadingSpinner />
             ) : (
