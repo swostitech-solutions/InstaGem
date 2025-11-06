@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { AddIcon } from './icons/AddIcon';
-import { HeartIcon } from './icons/HeartIcon';
-import { MessengerIcon } from './icons/MessengerIcon';
-import { SettingsIcon } from './icons/SettingsIcon';
-import { Logo } from './icons/Logo';
-import { BackIcon } from './icons/BackIcon';
-import { useAuth } from '../context/AuthContext';
-import { LoginModal } from './LoginModal';
-import { RegisterModal } from './RegisterModal';
-import { ProfileSettings } from './ProfileSettings';
+import React, { useState } from "react";
+import { AddIcon } from "./icons/AddIcon";
+import { HeartIcon } from "./icons/HeartIcon";
+import { MessengerIcon } from "./icons/MessengerIcon";
+import { SettingsIcon } from "./icons/SettingsIcon";
+import { Logo } from "./icons/Logo";
+import { BackIcon } from "./icons/BackIcon";
+import { useAuth } from "../context/AuthContext";
+import { LoginModal } from "./LoginModal";
+import { RegisterModal } from "./RegisterModal";
+import { ProfileSettings } from "./ProfileSettings";
 
 interface HeaderProps {
   onAddClick: () => void;
@@ -18,12 +18,12 @@ interface HeaderProps {
   isCurrentUserProfile?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-    onAddClick, 
-    isProfileView, 
-    profileUsername, 
-    onBackClick,
-    isCurrentUserProfile
+export const Header: React.FC<HeaderProps> = ({
+  onAddClick,
+  isProfileView,
+  profileUsername,
+  onBackClick,
+  isCurrentUserProfile,
 }) => {
   const { isAuthenticated, user, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
@@ -31,26 +31,26 @@ export const Header: React.FC<HeaderProps> = ({
   const [showSettings, setShowSettings] = useState(false);
 
   // Debug: Log user info
-  console.log('Header - User:', user);
-  console.log('Header - isAdmin:', user?.isAdmin);
+  console.log("Header - User:", user);
+  console.log("Header - isAdmin:", user?.isAdmin);
 
   return (
     <>
       <header className="sticky top-0 bg-black z-10 px-4 py-3 border-b border-gray-800">
         <div className="flex justify-between items-center h-[30px]">
           {isProfileView ? (
-              <div className="flex items-center space-x-4">
-                  {!isCurrentUserProfile && (
-                      <button onClick={onBackClick} aria-label="Go back">
-                          <BackIcon className="w-6 h-6" />
-                      </button>
-                  )}
-                  <span className="font-bold text-xl">{profileUsername}</span>
-              </div>
+            <div className="flex items-center space-x-4">
+              {!isCurrentUserProfile && (
+                <button onClick={onBackClick} aria-label="Go back">
+                  <BackIcon className="w-6 h-6" />
+                </button>
+              )}
+              <span className="font-bold text-xl">{profileUsername}</span>
+            </div>
           ) : (
-              <Logo />
+            <Logo />
           )}
-          
+
           <div className="flex items-center space-x-5">
             {isAuthenticated ? (
               <>
