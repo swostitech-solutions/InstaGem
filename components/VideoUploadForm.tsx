@@ -97,7 +97,10 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
       onSuccess();
     } catch (error: any) {
       console.error('Upload error:', error);
-      alert(error.response?.data?.message || 'Error uploading video');
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.message);
+      alert(error.response?.data?.message || error.message || 'Error uploading video');
     } finally {
       setUploading(false);
     }
