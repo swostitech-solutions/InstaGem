@@ -1,6 +1,6 @@
 import Video from '../models/Video.js';
 import User from '../models/User.js';
-import cloudinary from '../config/cloudinary.js';
+import { cloudinary } from '../config/cloudinary.js';
 
 // @desc    Upload new video
 // @route   POST /api/admin/videos

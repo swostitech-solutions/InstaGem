@@ -10,3 +10,4 @@ const connectCloudinary = () => {
 };
 
 export default connectCloudinary;
+export { cloudinary };
