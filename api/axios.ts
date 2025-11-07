@@ -20,10 +20,11 @@ API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      // Unauthorized - clear token and reload page
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // You can add navigation logic here if needed
+      // Reload to show login screen
+      window.location.reload();
     }
     return Promise.reject(error);
   }
