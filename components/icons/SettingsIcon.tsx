@@ -1,11 +1,18 @@
-import React from 'react';
+import React from "react";
 
 interface SettingsIconProps {
   className?: string;
 }
 
-export const SettingsIcon: React.FC<SettingsIconProps> = ({ className = 'w-6 h-6' }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+export const SettingsIcon: React.FC<SettingsIconProps> = ({
+  className = "w-6 h-6",
+}) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"

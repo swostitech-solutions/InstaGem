@@ -1,9 +1,9 @@
-import API from './axios';
+import API from "./axios";
 
 export interface CreatePostData {
   imageUrl: string;
   caption: string;
-  mediaType?: 'image' | 'video';
+  mediaType?: "image" | "video";
 }
 
 // Get all posts (feed)
@@ -20,7 +20,7 @@ export const getPost = async (postId: string) => {
 
 // Create new post
 export const createPost = async (data: CreatePostData) => {
-  const response = await API.post('/posts', data);
+  const response = await API.post("/posts", data);
   return response.data;
 };
 

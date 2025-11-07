@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { LoginModal } from './LoginModal';
-import { RegisterModal } from './RegisterModal';
+import React, { useState } from "react";
+import { LoginModal } from "./LoginModal";
+import { RegisterModal } from "./RegisterModal";
 
 const AuthModal: React.FC = () => {
   const [showLogin, setShowLogin] = useState(true);
@@ -8,12 +8,12 @@ const AuthModal: React.FC = () => {
   return (
     <>
       {showLogin ? (
-        <LoginModal 
+        <LoginModal
           onClose={() => {}} // Can't close - auth is required
           onSwitchToRegister={() => setShowLogin(false)}
         />
       ) : (
-        <RegisterModal 
+        <RegisterModal
           onClose={() => {}} // Can't close - auth is required
           onSwitchToLogin={() => setShowLogin(true)}
         />

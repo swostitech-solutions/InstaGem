@@ -1,4 +1,4 @@
-import axios from './axios';
+import axios from "./axios";
 
 interface VideoFilters {
   status?: string;
@@ -10,20 +10,20 @@ interface VideoFilters {
 // Get all videos (admin)
 export const getAllVideos = async (filters: VideoFilters = {}) => {
   const params = new URLSearchParams();
-  if (filters.status) params.append('status', filters.status);
-  if (filters.ageGroup) params.append('ageGroup', filters.ageGroup);
-  if (filters.category) params.append('category', filters.category);
-  if (filters.page) params.append('page', filters.page.toString());
-  
+  if (filters.status) params.append("status", filters.status);
+  if (filters.ageGroup) params.append("ageGroup", filters.ageGroup);
+  if (filters.category) params.append("category", filters.category);
+  if (filters.page) params.append("page", filters.page.toString());
+
   const response = await axios.get(`/admin/videos?${params.toString()}`);
   return response.data;
 };
 
 // Upload video
 export const uploadVideo = async (formData) => {
-  const response = await axios.post('/admin/videos', formData, {
+  const response = await axios.post("/admin/videos", formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;

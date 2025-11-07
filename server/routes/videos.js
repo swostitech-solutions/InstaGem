@@ -12,20 +12,24 @@ router.get('/', protect, async (req, res) => {
     const { ageGroup, category, page = 1, limit = 6 } = req.query;
 
     const query = { status: 'published' };
-    
+
     // Filter by age group if provided
     if (ageGroup) {
       query.ageGroup = ageGroup;
     } else if (req.user.childAge) {
-      // Auto-filter based on user's age
-      if (req.user.childAge >= 1 && req.user.childAge <= 5) {
+      // Auto-filter based on user's age - strict age grouping
+      if (req.user.childAge >= 1 && req.user.childAge < 5) {
+        // Ages 1-4: Only show 1-5 videos
         query.ageGroup = '1-5';
-      } else if (req.user.childAge >= 5 && req.user.childAge <= 10) {
-        query.ageGroup = { $in: ['1-5', '5-10'] };
-      } else if (req.user.childAge >= 10 && req.user.childAge <= 13) {
-        query.ageGroup = { $in: ['5-10', '10-13'] };
+      } else if (req.user.childAge >= 5 && req.user.childAge < 10) {
+        // Ages 5-9: Only show 5-10 videos
+        query.ageGroup = '5-10';
+      } else if (req.user.childAge >= 10 && req.user.childAge < 13) {
+        // Ages 10-12: Only show 10-13 videos
+        query.ageGroup = '10-13';
       } else if (req.user.childAge >= 13 && req.user.childAge <= 17) {
-        query.ageGroup = { $in: ['10-13', '13-17'] };
+        // Ages 13-17: Only show 13-17 videos
+        query.ageGroup = '13-17';
       }
     }
 
@@ -94,7 +98,7 @@ router.post('/:id/like', protect, async (req, res) => {
     if (likeIndex > -1) {
       // Unlike
       video.likes.splice(likeIndex, 1);
-      
+
       // Remove from user's liked videos
       await User.findByIdAndUpdate(req.user._id, {
         $pull: { likedVideos: video._id }
@@ -102,7 +106,7 @@ router.post('/:id/like', protect, async (req, res) => {
     } else {
       // Like
       video.likes.push(req.user._id);
-      
+
       // Add to user's liked videos
       await User.findByIdAndUpdate(req.user._id, {
         $addToSet: { likedVideos: video._id }

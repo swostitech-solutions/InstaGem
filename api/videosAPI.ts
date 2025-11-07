@@ -1,12 +1,12 @@
-import axios from './axios';
+import axios from "./axios";
 
 // Get published videos (age-filtered feed)
 export const getVideos = async (ageGroup?: string, page = 1) => {
   const params = new URLSearchParams();
-  if (ageGroup) params.append('ageGroup', ageGroup);
-  params.append('page', page.toString());
-  params.append('limit', '6');
-  
+  if (ageGroup) params.append("ageGroup", ageGroup);
+  params.append("page", page.toString());
+  params.append("limit", "6");
+
   const response = await axios.get(`/videos?${params.toString()}`);
   return response.data;
 };

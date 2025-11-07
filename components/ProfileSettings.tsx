@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import * as authAPI from '../api/authAPI';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import * as authAPI from "../api/authAPI";
 
 interface ProfileSettingsProps {
   onClose: () => void;
 }
 
-export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => {
+export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
+  onClose,
+}) => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'account' | 'password'>('profile');
-  
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "account" | "password"
+  >("profile");
+
   // Profile form state
-  const [fullName, setFullName] = useState(user?.fullName || '');
-  const [username, setUsername] = useState(user?.username || '');
-  const [bio, setBio] = useState(user?.bio || '');
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [username, setUsername] = useState(user?.username || "");
+  const [bio, setBio] = useState(user?.bio || "");
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
   const [childAge, setChildAge] = useState(user?.childAge || 0);
-  const [parentEmail, setParentEmail] = useState(user?.parentEmail || '');
-  const [favoriteColor, setFavoriteColor] = useState(user?.favoriteColor || 'purple');
-  
+  const [parentEmail, setParentEmail] = useState(user?.parentEmail || "");
+  const [favoriteColor, setFavoriteColor] = useState(
+    user?.favoriteColor || "purple"
+  );
+
   // Password form state
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   // UI state
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +44,12 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
 
     try {
       // TODO: Call API to update profile
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      setMessage({ type: "success", text: "Profile updated successfully!" });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to update profile' });
+      setMessage({
+        type: "error",
+        text: error.message || "Failed to update profile",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -45,14 +57,17 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match!' });
+      setMessage({ type: "error", text: "Passwords do not match!" });
       return;
     }
 
     if (newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters!' });
+      setMessage({
+        type: "error",
+        text: "Password must be at least 6 characters!",
+      });
       return;
     }
 
@@ -61,12 +76,15 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
 
     try {
       // TODO: Call API to change password
-      setMessage({ type: 'success', text: 'Password changed successfully!' });
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      setMessage({ type: "success", text: "Password changed successfully!" });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to change password' });
+      setMessage({
+        type: "error",
+        text: error.message || "Failed to change password",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +95,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
       await logout();
       onClose();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -87,10 +105,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
           <h2 className="text-xl font-semibold">Settings</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
             ✕
           </button>
         </div>
@@ -98,31 +113,31 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
         {/* Tabs */}
         <div className="flex border-b border-gray-800">
           <button
-            onClick={() => setActiveTab('profile')}
+            onClick={() => setActiveTab("profile")}
             className={`flex-1 px-4 py-3 text-sm font-medium ${
-              activeTab === 'profile'
-                ? 'text-white border-b-2 border-white'
-                : 'text-gray-400 hover:text-white'
+              activeTab === "profile"
+                ? "text-white border-b-2 border-white"
+                : "text-gray-400 hover:text-white"
             }`}
           >
             Edit Profile
           </button>
           <button
-            onClick={() => setActiveTab('account')}
+            onClick={() => setActiveTab("account")}
             className={`flex-1 px-4 py-3 text-sm font-medium ${
-              activeTab === 'account'
-                ? 'text-white border-b-2 border-white'
-                : 'text-gray-400 hover:text-white'
+              activeTab === "account"
+                ? "text-white border-b-2 border-white"
+                : "text-gray-400 hover:text-white"
             }`}
           >
             Account
           </button>
           <button
-            onClick={() => setActiveTab('password')}
+            onClick={() => setActiveTab("password")}
             className={`flex-1 px-4 py-3 text-sm font-medium ${
-              activeTab === 'password'
-                ? 'text-white border-b-2 border-white'
-                : 'text-gray-400 hover:text-white'
+              activeTab === "password"
+                ? "text-white border-b-2 border-white"
+                : "text-gray-400 hover:text-white"
             }`}
           >
             Password
@@ -135,9 +150,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
           {message && (
             <div
               className={`mb-4 p-3 rounded-lg ${
-                message.type === 'success'
-                  ? 'bg-green-900 text-green-100'
-                  : 'bg-red-900 text-red-100'
+                message.type === "success"
+                  ? "bg-green-900 text-green-100"
+                  : "bg-red-900 text-red-100"
               }`}
             >
               {message.text}
@@ -145,11 +160,13 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
           )}
 
           {/* Edit Profile Tab */}
-          {activeTab === 'profile' && (
+          {activeTab === "profile" && (
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               <div className="flex items-center space-x-4 mb-6">
                 <img
-                  src={avatarUrl || 'https://picsum.photos/seed/default/100/100'}
+                  src={
+                    avatarUrl || "https://picsum.photos/seed/default/100/100"
+                  }
                   alt="Profile"
                   className="w-16 h-16 rounded-full"
                 />
@@ -165,7 +182,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <label className="block text-sm font-medium mb-1">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   value={fullName}
@@ -175,7 +194,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Username</label>
+                <label className="block text-sm font-medium mb-1">
+                  Username
+                </label>
                 <input
                   type="text"
                   value={username}
@@ -198,7 +219,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Child's Age</label>
+                <label className="block text-sm font-medium mb-1">
+                  Child's Age
+                </label>
                 <input
                   type="number"
                   value={childAge}
@@ -210,7 +233,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Parent Email</label>
+                <label className="block text-sm font-medium mb-1">
+                  Parent Email
+                </label>
                 <input
                   type="email"
                   value={parentEmail}
@@ -220,7 +245,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Favorite Color</label>
+                <label className="block text-sm font-medium mb-1">
+                  Favorite Color
+                </label>
                 <select
                   value={favoriteColor}
                   onChange={(e) => setFavoriteColor(e.target.value)}
@@ -241,13 +268,13 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
                 disabled={isLoading}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg transition"
               >
-                {isLoading ? 'Saving...' : 'Save Changes'}
+                {isLoading ? "Saving..." : "Save Changes"}
               </button>
             </form>
           )}
 
           {/* Account Tab */}
-          {activeTab === 'account' && (
+          {activeTab === "account" && (
             <div className="space-y-6">
               <div className="bg-gray-800 rounded-lg p-4">
                 <h3 className="font-semibold mb-2">Account Information</h3>
@@ -262,7 +289,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Account Type</span>
-                    <span>{user?.isAdmin ? 'Admin' : 'User'}</span>
+                    <span>{user?.isAdmin ? "Admin" : "User"}</span>
                   </div>
                 </div>
               </div>
@@ -292,10 +319,12 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
           )}
 
           {/* Password Tab */}
-          {activeTab === 'password' && (
+          {activeTab === "password" && (
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Current Password</label>
+                <label className="block text-sm font-medium mb-1">
+                  Current Password
+                </label>
                 <input
                   type="password"
                   value={currentPassword}
@@ -306,7 +335,9 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">New Password</label>
+                <label className="block text-sm font-medium mb-1">
+                  New Password
+                </label>
                 <input
                   type="password"
                   value={newPassword}
@@ -315,11 +346,15 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
                   minLength={6}
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
                 />
-                <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Must be at least 6 characters
+                </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Confirm New Password</label>
+                <label className="block text-sm font-medium mb-1">
+                  Confirm New Password
+                </label>
                 <input
                   type="password"
                   value={confirmPassword}
@@ -335,7 +370,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose }) => 
                 disabled={isLoading}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg transition"
               >
-                {isLoading ? 'Changing...' : 'Change Password'}
+                {isLoading ? "Changing..." : "Change Password"}
               </button>
 
               <div className="bg-blue-900 bg-opacity-30 border border-blue-800 rounded-lg p-3 text-sm text-blue-200">

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import type { Post as PostType } from '../types';
-import { SearchIcon } from './icons/SearchIcon';
-import { GridPostItem } from './GridPostItem';
-import { useAuth } from '../context/AuthContext';
-import * as videosAPI from '../api/videosAPI';
+import React, { useState, useEffect } from "react";
+import type { Post as PostType } from "../types";
+import { SearchIcon } from "./icons/SearchIcon";
+import { GridPostItem } from "./GridPostItem";
+import { useAuth } from "../context/AuthContext";
+import * as videosAPI from "../api/videosAPI";
 
 interface Video {
   _id: string;
@@ -20,12 +20,12 @@ interface Video {
 interface SearchViewProps {
   posts: PostType[];
 }
-  
+
 export const SearchView: React.FC<SearchViewProps> = ({ posts }) => {
   const { user } = useAuth();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchVideos();
@@ -34,21 +34,24 @@ export const SearchView: React.FC<SearchViewProps> = ({ posts }) => {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const ageGroup = user?.childAge ? getAgeGroupFromAge(user.childAge) : undefined;
+      const ageGroup = user?.childAge
+        ? getAgeGroupFromAge(user.childAge)
+        : undefined;
       const response = await videosAPI.getVideos(ageGroup);
       setVideos(response.data || []);
     } catch (error) {
-      console.error('Error fetching videos:', error);
+      console.error("Error fetching videos:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredVideos = videos.filter(video => 
-    searchQuery === '' || 
-    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredVideos = videos.filter(
+    (video) =>
+      searchQuery === "" ||
+      video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -77,15 +80,21 @@ export const SearchView: React.FC<SearchViewProps> = ({ posts }) => {
         <div className="flex flex-col items-center justify-center h-64 text-gray-400">
           <SearchIcon className="w-16 h-16 mb-4 opacity-50" />
           <p className="text-lg">
-            {searchQuery ? 'No videos found' : user?.childAge ? `No videos for ages ${getAgeGroupLabel(user.childAge)}` : 'No videos available'}
+            {searchQuery
+              ? "No videos found"
+              : user?.childAge
+              ? `No videos for ages ${getAgeGroupLabel(user.childAge)}`
+              : "No videos available"}
           </p>
           {user?.childAge && !searchQuery && (
-            <p className="text-sm mt-2">Videos for your age group will appear here</p>
+            <p className="text-sm mt-2">
+              Videos for your age group will appear here
+            </p>
           )}
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-0.5">
-          {filteredVideos.map(video => (
+          {filteredVideos.map((video) => (
             <VideoGridItem key={video._id} video={video} />
           ))}
         </div>
@@ -107,22 +116,32 @@ const VideoGridItem: React.FC<{ video: Video }> = ({ video }) => {
           <p className="font-semibold truncate">{video.title}</p>
           <div className="flex items-center space-x-2 text-gray-300 mt-1">
             <span className="flex items-center">
-              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+              <svg
+                className="w-3 h-3 mr-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                <path
+                  fillRule="evenodd"
+                  d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                  clipRule="evenodd"
+                />
               </svg>
               {video.views}
             </span>
-            <span className="flex items-center">
-              ❤️ {video.likes}
-            </span>
+            <span className="flex items-center">❤️ {video.likes}</span>
           </div>
         </div>
       </div>
       {/* Video play icon overlay */}
       <div className="absolute top-2 right-2">
-        <svg className="w-6 h-6 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+        <svg
+          className="w-6 h-6 text-white drop-shadow-lg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
         </svg>
       </div>
     </div>
@@ -130,17 +149,17 @@ const VideoGridItem: React.FC<{ video: Video }> = ({ video }) => {
 };
 
 const getAgeGroupLabel = (age: number): string => {
-  if (age >= 1 && age <= 5) return '1-5';
-  if (age >= 5 && age <= 10) return '5-10';
-  if (age >= 10 && age <= 13) return '10-13';
-  if (age >= 13 && age <= 17) return '13-17';
-  return 'all ages';
+  if (age >= 1 && age < 5) return "1-4";
+  if (age >= 5 && age < 10) return "5-9";
+  if (age >= 10 && age < 13) return "10-12";
+  if (age >= 13 && age <= 17) return "13-17";
+  return "all ages";
 };
 
 const getAgeGroupFromAge = (age: number): string => {
-  if (age >= 1 && age <= 5) return '1-5';
-  if (age > 5 && age <= 10) return '5-10';
-  if (age > 10 && age <= 13) return '10-13';
-  if (age > 13 && age <= 17) return '13-17';
-  return '1-5'; // default
+  if (age >= 1 && age < 5) return "1-5";
+  if (age >= 5 && age < 10) return "5-10";
+  if (age >= 10 && age < 13) return "10-13";
+  if (age >= 13 && age <= 17) return "13-17";
+  return "1-5"; // default
 };

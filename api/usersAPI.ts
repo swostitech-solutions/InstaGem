@@ -1,4 +1,4 @@
-import API from './axios';
+import API from "./axios";
 
 export interface UpdateProfileData {
   fullName?: string;
@@ -13,7 +13,10 @@ export const getUserProfile = async (userId: string) => {
 };
 
 // Update user profile
-export const updateUserProfile = async (userId: string, data: UpdateProfileData) => {
+export const updateUserProfile = async (
+  userId: string,
+  data: UpdateProfileData
+) => {
   const response = await API.put(`/users/${userId}`, data);
   return response.data;
 };

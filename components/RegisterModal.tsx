@@ -1,26 +1,31 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 interface RegisterModalProps {
   onClose: () => void;
   onSwitchToLogin: () => void;
 }
 
-export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchToLogin }) => {
+export const RegisterModal: React.FC<RegisterModalProps> = ({
+  onClose,
+  onSwitchToLogin,
+}) => {
   const { register } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    fullName: '',
-    age: '',
-    parentEmail: '',
-    favoriteColor: 'purple',
+    username: "",
+    email: "",
+    password: "",
+    fullName: "",
+    age: "",
+    parentEmail: "",
+    favoriteColor: "purple",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -29,18 +34,18 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validate age
     const age = parseInt(formData.age);
     if (age < 1 || age > 17) {
-      setError('InstaGem is for kids aged 1-17 years old! 🎈');
+      setError("InstaGem is for kids aged 1-17 years old! 🎈");
       return;
     }
 
     // Require parent email for kids under 13
     if (age < 13 && !formData.parentEmail) {
-      setError('We need your parent\'s email to keep you safe! 👨‍👩‍👧');
+      setError("We need your parent's email to keep you safe! 👨‍👩‍👧");
       return;
     }
 
@@ -58,25 +63,27 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
       });
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Oops! Something went wrong. Try again! 🌟');
+      setError(err.message || "Oops! Something went wrong. Try again! 🌟");
     } finally {
       setLoading(false);
     }
   };
 
   const colors = [
-    { name: 'Purple', value: 'purple', bg: 'bg-purple-500' },
-    { name: 'Blue', value: 'blue', bg: 'bg-blue-500' },
-    { name: 'Pink', value: 'pink', bg: 'bg-pink-500' },
-    { name: 'Green', value: 'green', bg: 'bg-green-500' },
-    { name: 'Orange', value: 'orange', bg: 'bg-orange-500' },
-    { name: 'Yellow', value: 'yellow', bg: 'bg-yellow-500' },
+    { name: "Purple", value: "purple", bg: "bg-purple-500" },
+    { name: "Blue", value: "blue", bg: "bg-blue-500" },
+    { name: "Pink", value: "pink", bg: "bg-pink-500" },
+    { name: "Green", value: "green", bg: "bg-green-500" },
+    { name: "Orange", value: "orange", bg: "bg-orange-500" },
+    { name: "Yellow", value: "yellow", bg: "bg-yellow-500" },
   ];
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 bg-opacity-95 flex items-start justify-center z-50 animate-fade-in overflow-y-auto py-4 px-4">
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-6 max-w-lg w-full my-auto animate-slide-in-up shadow-2xl border-2 border-purple-500 max-h-[95vh] overflow-y-auto"
-           style={{ scrollbarWidth: 'thin', scrollbarColor: '#8B5CF6 #1F2937' }}>
+      <div
+        className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-6 max-w-lg w-full my-auto animate-slide-in-up shadow-2xl border-2 border-purple-500 max-h-[95vh] overflow-y-auto"
+        style={{ scrollbarWidth: "thin", scrollbarColor: "#8B5CF6 #1F2937" }}
+      >
         {/* Close button - repositioned */}
         <button
           onClick={onClose}
@@ -103,7 +110,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
         <div className="mb-4 p-3 bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-400 rounded-xl">
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-xl">🛡️</span>
-            <h3 className="text-green-400 font-bold text-xs">Safe & Educational</h3>
+            <h3 className="text-green-400 font-bold text-xs">
+              Safe & Educational
+            </h3>
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs text-center">
             <div>
@@ -131,7 +140,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Kid's Name */}
           <div className="relative">
-            <label htmlFor="fullName" className="block text-xs font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-1">
+            <label
+              htmlFor="fullName"
+              className="block text-xs font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-1"
+            >
               👶 Kid's Name
             </label>
             <input
@@ -148,7 +160,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
           {/* Age */}
           <div className="relative">
-            <label htmlFor="age" className="block text-xs font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-1">
+            <label
+              htmlFor="age"
+              className="block text-xs font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-1"
+            >
               🎂 How Old Are You?
             </label>
             <select
@@ -160,16 +175,26 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               required
             >
               <option value="">Pick your age! 🎈</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map(age => (
-                <option key={age} value={age}>{age} {age === 1 ? 'year old' : 'years old'}</option>
-              ))}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map(
+                (age) => (
+                  <option key={age} value={age}>
+                    {age} {age === 1 ? "year old" : "years old"}
+                  </option>
+                )
+              )}
             </select>
           </div>
 
           {/* Parent's Email */}
           <div className="relative">
-            <label htmlFor="parentEmail" className="block text-xs font-bold text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text mb-1">
-              👨‍👩‍👧 Parent's Email {parseInt(formData.age) < 13 && <span className="text-red-400">*</span>}
+            <label
+              htmlFor="parentEmail"
+              className="block text-xs font-bold text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text mb-1"
+            >
+              👨‍👩‍👧 Parent's Email{" "}
+              {parseInt(formData.age) < 13 && (
+                <span className="text-red-400">*</span>
+              )}
             </label>
             <input
               type="email"
@@ -194,7 +219,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
           {/* Username */}
           <div className="relative">
-            <label htmlFor="username" className="block text-xs font-bold text-transparent bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text mb-1">
+            <label
+              htmlFor="username"
+              className="block text-xs font-bold text-transparent bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text mb-1"
+            >
               🌟 Choose a Username
             </label>
             <input
@@ -212,7 +240,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
           {/* Email */}
           <div className="relative">
-            <label htmlFor="email" className="block text-xs font-bold text-transparent bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text mb-1">
+            <label
+              htmlFor="email"
+              className="block text-xs font-bold text-transparent bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text mb-1"
+            >
               📧 Your Email
             </label>
             <input
@@ -229,7 +260,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
           {/* Password */}
           <div className="relative">
-            <label htmlFor="password" className="block text-xs font-bold text-transparent bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text mb-1">
+            <label
+              htmlFor="password"
+              className="block text-xs font-bold text-transparent bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text mb-1"
+            >
               🔒 Create a Secret Password
             </label>
             <input
@@ -251,15 +285,19 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               🎨 Pick Your Favorite Color!
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {colors.map(color => (
+              {colors.map((color) => (
                 <button
                   key={color.value}
                   type="button"
-                  onClick={() => setFormData({ ...formData, favoriteColor: color.value })}
-                  className={`${color.bg} py-2 px-3 rounded-lg font-bold text-white text-xs transition transform hover:scale-105 ${
+                  onClick={() =>
+                    setFormData({ ...formData, favoriteColor: color.value })
+                  }
+                  className={`${
+                    color.bg
+                  } py-2 px-3 rounded-lg font-bold text-white text-xs transition transform hover:scale-105 ${
                     formData.favoriteColor === color.value
-                      ? 'ring-2 ring-white shadow-xl scale-105'
-                      : 'opacity-70 hover:opacity-100'
+                      ? "ring-2 ring-white shadow-xl scale-105"
+                      : "opacity-70 hover:opacity-100"
                   }`}
                 >
                   {color.name}
@@ -281,7 +319,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               </li>
               <li className="flex items-center gap-1">
                 <span className="text-green-400 text-xs">✓</span>
-                <span>Learn while having fun - Screen time that counts! 📚</span>
+                <span>
+                  Learn while having fun - Screen time that counts! 📚
+                </span>
               </li>
               <li className="flex items-center gap-1">
                 <span className="text-green-400 text-xs">✓</span>
@@ -289,7 +329,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
               </li>
               <li className="flex items-center gap-1">
                 <span className="text-green-400 text-xs">✓</span>
-                <span>Age-appropriate for {formData.age ? `${formData.age} year olds` : 'your age'}</span>
+                <span>
+                  Age-appropriate for{" "}
+                  {formData.age ? `${formData.age} year olds` : "your age"}
+                </span>
               </li>
             </ul>
           </div>
@@ -323,9 +366,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
         {/* Switch to Login */}
         <div className="mt-4 text-center">
-          <p className="text-gray-400 text-xs">
-            Already have an account? 🌈
-          </p>
+          <p className="text-gray-400 text-xs">Already have an account? 🌈</p>
           <button
             onClick={onSwitchToLogin}
             className="mt-1 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold text-sm hover:from-blue-300 hover:to-purple-300 transition"
@@ -336,10 +377,18 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onSwitchT
 
         {/* Fun decorative elements */}
         <div className="mt-3 flex justify-center gap-2 text-xl opacity-50 pb-2">
-          <span className="animate-bounce" style={{ animationDelay: '0s' }}>🌟</span>
-          <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>💫</span>
-          <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>✨</span>
-          <span className="animate-bounce" style={{ animationDelay: '0.3s' }}>⭐</span>
+          <span className="animate-bounce" style={{ animationDelay: "0s" }}>
+            🌟
+          </span>
+          <span className="animate-bounce" style={{ animationDelay: "0.1s" }}>
+            💫
+          </span>
+          <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
+            ✨
+          </span>
+          <span className="animate-bounce" style={{ animationDelay: "0.3s" }}>
+            ⭐
+          </span>
         </div>
       </div>
     </div>

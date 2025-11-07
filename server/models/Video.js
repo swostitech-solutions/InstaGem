@@ -112,12 +112,12 @@ videoSchema.index({ status: 1, category: 1, createdAt: -1 });
 videoSchema.index({ uploadedBy: 1, status: 1 });
 
 // Virtual for like count
-videoSchema.virtual('likesCount').get(function() {
+videoSchema.virtual('likesCount').get(function () {
   return this.likes.length;
 });
 
 // Virtual for comment count
-videoSchema.virtual('commentsCount').get(function() {
+videoSchema.virtual('commentsCount').get(function () {
   return this.comments.length;
 });
 

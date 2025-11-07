@@ -1,4 +1,4 @@
-import API from './axios';
+import API from "./axios";
 
 export interface RegisterData {
   username: string;
@@ -30,24 +30,24 @@ export interface AuthResponse {
 
 // Register new user
 export const register = async (data: RegisterData) => {
-  const response = await API.post<AuthResponse>('/auth/register', data);
+  const response = await API.post<AuthResponse>("/auth/register", data);
   return response.data;
 };
 
 // Login user
 export const login = async (data: LoginData) => {
-  const response = await API.post<AuthResponse>('/auth/login', data);
+  const response = await API.post<AuthResponse>("/auth/login", data);
   return response.data;
 };
 
 // Logout user
 export const logout = async () => {
-  const response = await API.post('/auth/logout');
+  const response = await API.post("/auth/logout");
   return response.data;
 };
 
 // Get current user
 export const getCurrentUser = async () => {
-  const response = await API.get('/auth/me');
+  const response = await API.get("/auth/me");
   return response.data;
 };

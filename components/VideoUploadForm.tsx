@@ -1,38 +1,41 @@
-import React, { useState } from 'react';
-import * as adminAPI from '../api/adminAPI';
+import React, { useState } from "react";
+import * as adminAPI from "../api/adminAPI";
 
 interface VideoUploadFormProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess }) => {
+const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
+  onClose,
+  onSuccess,
+}) => {
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    ageGroup: '1-5',
-    category: 'Math',
-    learningObjectives: [''],
+    title: "",
+    description: "",
+    ageGroup: "1-5",
+    category: "Math",
+    learningObjectives: [""],
   });
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [videoPreview, setVideoPreview] = useState<string>('');
-  const [thumbnailPreview, setThumbnailPreview] = useState<string>('');
+  const [videoPreview, setVideoPreview] = useState<string>("");
+  const [thumbnailPreview, setThumbnailPreview] = useState<string>("");
 
   const categories = [
-    'Math',
-    'Science',
-    'Reading',
-    'Writing',
-    'Language',
-    'Music',
-    'Art',
-    'Social Studies',
-    'Life Skills',
-    'Physical Education',
-    'Technology',
-    'Critical Thinking',
+    "Math",
+    "Science",
+    "Reading",
+    "Writing",
+    "Language",
+    "Music",
+    "Art",
+    "Social Studies",
+    "Life Skills",
+    "Physical Education",
+    "Technology",
+    "Critical Thinking",
   ];
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,12 +63,14 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
   const addObjective = () => {
     setFormData({
       ...formData,
-      learningObjectives: [...formData.learningObjectives, ''],
+      learningObjectives: [...formData.learningObjectives, ""],
     });
   };
 
   const removeObjective = (index: number) => {
-    const newObjectives = formData.learningObjectives.filter((_, i) => i !== index);
+    const newObjectives = formData.learningObjectives.filter(
+      (_, i) => i !== index
+    );
     setFormData({ ...formData, learningObjectives: newObjectives });
   };
 
@@ -73,7 +78,7 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
     e.preventDefault();
 
     if (!videoFile || !thumbnailFile) {
-      alert('Please select both video and thumbnail files');
+      alert("Please select both video and thumbnail files");
       return;
     }
 
@@ -81,26 +86,30 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
 
     try {
       const uploadData = new FormData();
-      uploadData.append('video', videoFile);
-      uploadData.append('thumbnail', thumbnailFile);
-      uploadData.append('title', formData.title);
-      uploadData.append('description', formData.description);
-      uploadData.append('ageGroup', formData.ageGroup);
-      uploadData.append('category', formData.category);
+      uploadData.append("video", videoFile);
+      uploadData.append("thumbnail", thumbnailFile);
+      uploadData.append("title", formData.title);
+      uploadData.append("description", formData.description);
+      uploadData.append("ageGroup", formData.ageGroup);
+      uploadData.append("category", formData.category);
       uploadData.append(
-        'learningObjectives',
+        "learningObjectives",
         JSON.stringify(formData.learningObjectives.filter((obj) => obj.trim()))
       );
 
       await adminAPI.uploadVideo(uploadData);
-      alert('Video uploaded successfully!');
+      alert("Video uploaded successfully!");
       onSuccess();
     } catch (error: any) {
-      console.error('Upload error:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      console.error('Error message:', error.message);
-      alert(error.response?.data?.message || error.message || 'Error uploading video');
+      console.error("Upload error:", error);
+      console.error("Error response:", error.response?.data);
+      console.error("Error status:", error.response?.status);
+      console.error("Error message:", error.message);
+      alert(
+        error.response?.data?.message ||
+          error.message ||
+          "Error uploading video"
+      );
     } finally {
       setUploading(false);
     }
@@ -116,8 +125,18 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
             className="text-gray-400 hover:text-white transition"
             disabled={uploading}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -136,7 +155,11 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
               required
             />
             {videoPreview && (
-              <video src={videoPreview} controls className="mt-3 w-full rounded-lg" />
+              <video
+                src={videoPreview}
+                controls
+                className="mt-3 w-full rounded-lg"
+              />
             )}
           </div>
 
@@ -153,7 +176,11 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
               required
             />
             {thumbnailPreview && (
-              <img src={thumbnailPreview} alt="Thumbnail preview" className="mt-3 w-full rounded-lg" />
+              <img
+                src={thumbnailPreview}
+                alt="Thumbnail preview"
+                className="mt-3 w-full rounded-lg"
+              />
             )}
           </div>
 
@@ -165,7 +192,9 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none"
               placeholder="e.g., Learning Numbers 1-10"
               required
@@ -179,7 +208,9 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none"
               placeholder="Describe what kids will learn..."
               rows={4}
@@ -194,7 +225,9 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
             </label>
             <select
               value={formData.ageGroup}
-              onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, ageGroup: e.target.value })
+              }
               className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none"
               required
             >
@@ -212,7 +245,9 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
             </label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
               className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none"
               required
             >
@@ -273,7 +308,7 @@ const VideoUploadForm: React.FC<VideoUploadFormProps> = ({ onClose, onSuccess })
               className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50"
               disabled={uploading}
             >
-              {uploading ? 'Uploading...' : 'Upload Video'}
+              {uploading ? "Uploading..." : "Upload Video"}
             </button>
           </div>
         </form>

@@ -1,39 +1,44 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 interface LoginModalProps {
   onClose: () => void;
   onSwitchToRegister: () => void;
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSwitchToRegister }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({
+  onClose,
+  onSwitchToRegister,
+}) => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       await login(email, password);
       onClose();
-      
+
       // Check if user is admin and redirect
-      const userStr = localStorage.getItem('user');
+      const userStr = localStorage.getItem("user");
       if (userStr) {
         const user = JSON.parse(userStr);
         if (user.isAdmin) {
-          window.location.href = '/admin';
+          window.location.href = "/admin";
         }
       }
     } catch (err: any) {
-      const errorMsg = err.message || 'Login failed';
-      if (errorMsg.includes('Invalid credentials')) {
-        setError('Invalid email or password. 🔐 Try creating a new account if you don\'t have one yet!');
+      const errorMsg = err.message || "Login failed";
+      if (errorMsg.includes("Invalid credentials")) {
+        setError(
+          "Invalid email or password. 🔐 Try creating a new account if you don't have one yet!"
+        );
       } else {
         setError(errorMsg);
       }
@@ -75,7 +80,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSwitchToRegis
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email Input */}
           <div className="relative">
-            <label htmlFor="email" className="block text-sm font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-2"
+            >
               📧 Your Email
             </label>
             <input
@@ -91,7 +99,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSwitchToRegis
 
           {/* Password Input */}
           <div className="relative">
-            <label htmlFor="password" className="block text-sm font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-2"
+            >
               🔐 Password
             </label>
             <input
@@ -136,9 +147,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSwitchToRegis
 
         {/* Switch to Register */}
         <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
-            New to InstaGem? 🌈
-          </p>
+          <p className="text-gray-400 text-sm">New to InstaGem? 🌈</p>
           <button
             onClick={onSwitchToRegister}
             className="mt-2 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold hover:from-blue-300 hover:to-purple-300 transition"
@@ -149,10 +158,18 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSwitchToRegis
 
         {/* Fun decorative elements */}
         <div className="mt-6 flex justify-center gap-3 text-2xl opacity-50">
-          <span className="animate-bounce" style={{ animationDelay: '0s' }}>⭐</span>
-          <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>💫</span>
-          <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>✨</span>
-          <span className="animate-bounce" style={{ animationDelay: '0.3s' }}>🌟</span>
+          <span className="animate-bounce" style={{ animationDelay: "0s" }}>
+            ⭐
+          </span>
+          <span className="animate-bounce" style={{ animationDelay: "0.1s" }}>
+            💫
+          </span>
+          <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
+            ✨
+          </span>
+          <span className="animate-bounce" style={{ animationDelay: "0.3s" }}>
+            🌟
+          </span>
         </div>
       </div>
     </div>

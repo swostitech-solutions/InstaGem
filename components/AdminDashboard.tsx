@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import * as adminAPI from '../api/adminAPI';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import * as adminAPI from "../api/adminAPI";
 
 // Dynamic import to avoid build errors
-const VideoUploadForm = React.lazy(() => import('./VideoUploadForm'));
+const VideoUploadForm = React.lazy(() => import("./VideoUploadForm"));
 
 interface Video {
   _id: string;
@@ -26,7 +26,7 @@ const AdminDashboard: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUploadForm, setShowUploadForm] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'draft' | 'published'>('all');
+  const [filter, setFilter] = useState<"all" | "draft" | "published">("all");
 
   useEffect(() => {
     if (user?.isAdmin) {
@@ -37,11 +37,11 @@ const AdminDashboard: React.FC = () => {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const filterObj = filter !== 'all' ? { status: filter } : {};
+      const filterObj = filter !== "all" ? { status: filter } : {};
       const response = await adminAPI.getAllVideos(filterObj);
       setVideos(response.data);
     } catch (error) {
-      console.error('Error fetching videos:', error);
+      console.error("Error fetching videos:", error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ const AdminDashboard: React.FC = () => {
       await adminAPI.publishVideo(id);
       fetchVideos();
     } catch (error) {
-      console.error('Error publishing video:', error);
+      console.error("Error publishing video:", error);
     }
   };
 
@@ -61,17 +61,17 @@ const AdminDashboard: React.FC = () => {
       await adminAPI.unpublishVideo(id);
       fetchVideos();
     } catch (error) {
-      console.error('Error unpublishing video:', error);
+      console.error("Error unpublishing video:", error);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this video?')) {
+    if (window.confirm("Are you sure you want to delete this video?")) {
       try {
         await adminAPI.deleteVideo(id);
         fetchVideos();
       } catch (error) {
-        console.error('Error deleting video:', error);
+        console.error("Error deleting video:", error);
       }
     }
   };
@@ -111,7 +111,13 @@ const AdminDashboard: React.FC = () => {
 
         {/* Upload Form Modal */}
         {showUploadForm && (
-          <React.Suspense fallback={<div className="text-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div></div>}>
+          <React.Suspense
+            fallback={
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
+              </div>
+            }
+          >
             <VideoUploadForm
               onClose={() => setShowUploadForm(false)}
               onSuccess={handleUploadSuccess}
@@ -122,31 +128,31 @@ const AdminDashboard: React.FC = () => {
         {/* Filters */}
         <div className="flex gap-4 mb-6">
           <button
-            onClick={() => setFilter('all')}
+            onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg transition ${
-              filter === 'all'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              filter === "all"
+                ? "bg-purple-500 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
             All ({videos.length})
           </button>
           <button
-            onClick={() => setFilter('draft')}
+            onClick={() => setFilter("draft")}
             className={`px-4 py-2 rounded-lg transition ${
-              filter === 'draft'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              filter === "draft"
+                ? "bg-purple-500 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
             Drafts
           </button>
           <button
-            onClick={() => setFilter('published')}
+            onClick={() => setFilter("published")}
             className={`px-4 py-2 rounded-lg transition ${
-              filter === 'published'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              filter === "published"
+                ? "bg-purple-500 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
             Published
@@ -161,7 +167,9 @@ const AdminDashboard: React.FC = () => {
         ) : videos.length === 0 ? (
           <div className="text-center py-12 bg-gray-900 rounded-lg">
             <p className="text-gray-400 text-lg">No videos found</p>
-            <p className="text-gray-500 mt-2">Upload your first video to get started!</p>
+            <p className="text-gray-500 mt-2">
+              Upload your first video to get started!
+            </p>
           </div>
         ) : (
           <div className="bg-gray-900 rounded-lg overflow-hidden">
@@ -191,7 +199,10 @@ const AdminDashboard: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {videos.map((video) => (
-                    <tr key={video._id} className="hover:bg-gray-800 transition">
+                    <tr
+                      key={video._id}
+                      className="hover:bg-gray-800 transition"
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <img
@@ -219,16 +230,17 @@ const AdminDashboard: React.FC = () => {
                         <div className="text-sm">
                           <p className="text-gray-300">{video.views} views</p>
                           <p className="text-gray-400">
-                            {video.likes?.length || 0} likes · {video.comments?.length || 0} comments
+                            {video.likes?.length || 0} likes ·{" "}
+                            {video.comments?.length || 0} comments
                           </p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <span
                           className={`px-2 py-1 rounded text-sm ${
-                            video.status === 'published'
-                              ? 'bg-green-900/50 text-green-400'
-                              : 'bg-yellow-900/50 text-yellow-400'
+                            video.status === "published"
+                              ? "bg-green-900/50 text-green-400"
+                              : "bg-yellow-900/50 text-yellow-400"
                           }`}
                         >
                           {video.status}
@@ -236,7 +248,7 @@ const AdminDashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
-                          {video.status === 'draft' ? (
+                          {video.status === "draft" ? (
                             <button
                               onClick={() => handlePublish(video._id)}
                               className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm transition"
