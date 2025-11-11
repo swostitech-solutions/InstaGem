@@ -8,6 +8,7 @@ import { TermsOfService } from "./components/legal/TermsOfService";
 import { PrivacyPolicy } from "./components/legal/PrivacyPolicy";
 import { ContentGuidelines } from "./components/legal/ContentGuidelines";
 import AdminDashboard from "./components/AdminDashboard";
+import ParentDashboard from "./components/ParentDashboard";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -22,6 +23,7 @@ root.render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/parent-dashboard" element={<ParentDashboard />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/content-guidelines" element={<ContentGuidelines />} />

@@ -10,6 +10,7 @@ import { VolumeOffIcon } from "./icons/VolumeOffIcon";
 import { userLookup } from "../constants";
 import * as postsAPI from "../api/postsAPI";
 import { useAuth } from "../context/AuthContext";
+import { useVideoTracking } from "../hooks/useVideoTracking";
 
 interface PostProps {
   post: PostType;
@@ -29,6 +30,12 @@ export const Post: React.FC<PostProps> = ({
   const [isMuted, setIsMuted] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Track video watch progress (only for videos)
+  useVideoTracking({
+    videoId: post.id,
+    videoElement: post.mediaType === 'video' ? videoRef.current : null,
+  });
 
   const toggleLike = async () => {
     if (!isAuthenticated) {

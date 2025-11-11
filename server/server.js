@@ -13,6 +13,7 @@ import userRoutes from './routes/userRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import videoRoutes from './routes/videos.js';
 import adminVideoRoutes from './routes/adminVideos.js';
+import analyticsRoutes from './routes/analytics.js';
 
 // Load env variables
 dotenv.config();
@@ -53,6 +54,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/admin/videos', adminVideoRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Error handler middleware (must be last)
 app.use(errorHandler);
