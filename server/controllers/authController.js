@@ -79,17 +79,66 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    // First, try to find user by email (normal login)
+    let user = await User.findOne({ email }).select('+password');
+    let isParentLogin = false;
 
+    // If no user found with this email, check if it's a parent email
     if (!user) {
+      // Find a child account that has this email as parentEmail
+      const childAccount = await User.findOne({ parentEmail: email }).select('+password');
+      
+      if (childAccount) {
+        // Check if password matches the child's password
+        const isMatch = await childAccount.matchPassword(password);
+        
+        if (isMatch) {
+          // This is a parent trying to log in with their email and child's password
+          isParentLogin = true;
+          
+          // Create a virtual parent user object
+          user = {
+            _id: childAccount._id + '_parent', // Unique ID for parent session
+            email: email,
+            fullName: 'Parent',
+            isParent: true,
+            childId: childAccount._id,
+            parentEmail: email,
+          };
+          
+          const token = generateToken(childAccount._id);
+
+          // Set cookie
+          res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+          });
+
+          return res.json({
+            success: true,
+            isParentLogin: true,
+            data: {
+              _id: user._id,
+              email: user.email,
+              fullName: user.fullName,
+              isParent: true,
+              childId: childAccount._id,
+              parentEmail: email,
+              token,
+            },
+          });
+        }
+      }
+      
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials',
       });
     }
 
-    // Check password
+    // Normal user login
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
@@ -111,6 +160,7 @@ export const login = async (req, res) => {
 
     res.json({
       success: true,
+      isParentLogin: false,
       data: {
         _id: user._id,
         username: user.username,

@@ -9,15 +9,17 @@ import * as authAPI from "../api/authAPI";
 
 interface User {
   _id: string;
-  username: string;
+  username?: string;
   email: string;
   fullName: string;
-  avatarUrl: string;
-  bio: string;
+  avatarUrl?: string;
+  bio?: string;
   childAge?: number;
   parentEmail?: string;
   favoriteColor?: string;
   isAdmin?: boolean;
+  isParent?: boolean;
+  childId?: string;
   likedVideos?: string[];
   followers?: number;
   following?: number;
@@ -84,6 +86,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       localStorage.setItem("token", newToken);
       localStorage.setItem("user", JSON.stringify(userData));
+
+      // Check if this is a parent login and redirect to dashboard
+      if (response.isParentLogin || userData.isParent) {
+        window.location.href = "/parent-dashboard";
+      } else if (userData.isAdmin) {
+        window.location.href = "/admin";
+      }
     } catch (error: any) {
       console.error("Login error:", error);
       console.error("Error response:", error.response?.data);

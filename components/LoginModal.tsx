@@ -24,15 +24,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     try {
       await login(email, password);
       onClose();
-
-      // Check if user is admin and redirect
-      const userStr = localStorage.getItem("user");
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        if (user.isAdmin) {
-          window.location.href = "/admin";
-        }
-      }
+      // Redirect is now handled in AuthContext
     } catch (err: any) {
       const errorMsg = err.message || "Login failed";
       if (errorMsg.includes("Invalid credentials")) {

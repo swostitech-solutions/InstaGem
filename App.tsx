@@ -233,6 +233,9 @@ const App: React.FC = () => {
     if (tab === "profile" && user) {
       setViewingProfile({
         ...user,
+        username: user.username || user.email.split('@')[0],
+        avatarUrl: user.avatarUrl || 'https://picsum.photos/seed/default/100/100',
+        bio: user.bio || '',
         followers: user.followers || 0,
         following: user.following || 0,
       });

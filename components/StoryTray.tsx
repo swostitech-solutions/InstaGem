@@ -71,6 +71,9 @@ export const StoryTray: React.FC<StoryTrayProps> = ({
               onStoryClick({
                 ...user,
                 id: "current_user",
+                username: user.username || user.email.split('@')[0],
+                avatarUrl: user.avatarUrl || 'https://picsum.photos/seed/default/100/100',
+                bio: user.bio || '',
                 followers: user.followers || 0,
                 following: user.following || 0,
               })

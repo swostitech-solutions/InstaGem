@@ -17,13 +17,20 @@ export interface LoginData {
 
 export interface AuthResponse {
   success: boolean;
+  isParentLogin?: boolean;
   data: {
     _id: string;
-    username: string;
+    username?: string;
     email: string;
     fullName: string;
-    avatarUrl: string;
-    bio: string;
+    avatarUrl?: string;
+    bio?: string;
+    isParent?: boolean;
+    isAdmin?: boolean;
+    childId?: string;
+    parentEmail?: string;
+    childAge?: number;
+    favoriteColor?: string;
     token: string;
   };
 }

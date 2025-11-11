@@ -212,9 +212,14 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
                 Required for your child's safety and account recovery
               </p>
             )}
-            <p className="text-xs text-gray-500 mt-1">
-              Parents will receive activity updates & educational content tips
-            </p>
+            <div className="mt-2 p-3 bg-blue-500/20 border border-blue-400/30 rounded-xl">
+              <p className="text-xs text-blue-300 font-semibold mb-1">
+                📊 For Parents: View Learning Analytics
+              </p>
+              <p className="text-xs text-gray-300">
+                To see your child's progress, login with <span className="font-bold text-blue-400">this parent email</span> and <span className="font-bold text-blue-400">the same password</span> your child uses. You'll see their complete learning analytics! 🚀
+              </p>
+            </div>
           </div>
 
           {/* Username */}
