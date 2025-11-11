@@ -176,18 +176,27 @@ router.get('/child/:childId/overview', protect, verifyParentAccess, async (req, 
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // Recently watched videos
-    const recentVideos = watchHistory
-      .sort((a, b) => new Date(b.lastWatchedAt) - new Date(a.lastWatchedAt))
-      .slice(0, 5)
-      .map(item => ({
-        videoId: item.video._id,
-        title: item.video.title,
-        category: item.video.category,
-        completionPercentage: item.completionPercentage,
-        lastWatchedAt: item.lastWatchedAt,
-        watchCount: item.watchCount
-      }));
+    // Recently watched videos (only completed ones ≥90%)
+    const completedWatchHistory = watchHistory.filter(item => item.isCompleted);
+    
+    const recentVideos = await Promise.all(
+      completedWatchHistory
+        .sort((a, b) => new Date(b.lastWatchedAt) - new Date(a.lastWatchedAt))
+        .slice(0, 5)
+        .map(async (item) => {
+          const video = await Video.findById(item.video._id);
+          return {
+            videoId: item.video._id,
+            title: item.video.title,
+            category: item.video.category,
+            completionPercentage: item.completionPercentage,
+            lastWatchedAt: item.lastWatchedAt,
+            watchCount: item.watchCount,
+            likes: video ? video.likes.length : 0,
+            comments: video ? video.comments.length : 0
+          };
+        })
+    );
 
     res.json({
       success: true,
@@ -397,9 +406,21 @@ router.get('/child/:childId/achievements', protect, verifyParentAccess, async (r
 router.get('/parent/children', protect, async (req, res) => {
   try {
     // Find all children with this parent's email
-    const children = await User.find({
-      parentEmail: req.user.email
-    }).select('_id fullName username childAge avatarUrl');
+    // If user has parentEmail, they are a child - find themselves
+    // If user doesn't have parentEmail, find children where parentEmail matches their email
+    let children;
+    
+    if (req.user.parentEmail) {
+      // This is a child account, find all children with the same parentEmail (siblings)
+      children = await User.find({
+        parentEmail: req.user.parentEmail
+      }).select('_id fullName username childAge avatarUrl');
+    } else {
+      // This might be a parent account, find children where parentEmail matches their email
+      children = await User.find({
+        parentEmail: req.user.email
+      }).select('_id fullName username childAge avatarUrl');
+    }
 
     // Get quick stats for each child
     const childrenWithStats = await Promise.all(

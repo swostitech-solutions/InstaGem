@@ -40,6 +40,8 @@ interface ChildOverview {
     completionPercentage: number;
     lastWatchedAt: string;
     watchCount: number;
+    likes: number;
+    comments: number;
   }>;
   timeRange: number;
 }
@@ -415,46 +417,48 @@ const ParentDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                {overview.recentVideos.map((video, index) => (
-                  <div
-                    key={index}
-                    className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition transform hover:scale-[1.02]"
-                  >
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                      <div className="flex-1 min-w-[200px]">
-                        <h4 className="font-bold text-lg mb-2">{video.title}</h4>
-                        <div className="flex flex-wrap items-center gap-3 text-sm">
-                          <span className="bg-purple-500/30 text-purple-200 px-3 py-1 rounded-full font-semibold">
-                            📚 {video.category}
-                          </span>
-                          <span className="text-gray-300">👁️ Watched {video.watchCount}x</span>
-                          <span className="text-gray-400">
-                            {new Date(video.lastWatchedAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
+                {overview.recentVideos.length > 0 ? (
+                  overview.recentVideos.map((video, index) => (
+                    <div
+                      key={index}
+                      className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition transform hover:scale-[1.02]"
+                    >
+                      <div className="flex items-center justify-between gap-4 flex-wrap">
+                        <div className="flex-1 min-w-[200px]">
+                          <h4 className="font-bold text-lg mb-2">{video.title}</h4>
+                          <div className="flex flex-wrap items-center gap-3 text-sm">
+                            <span className="bg-purple-500/30 text-purple-200 px-3 py-1 rounded-full font-semibold">
+                              📚 {video.category}
+                            </span>
+                            <span className="text-gray-300">👁️ Watched {video.watchCount}x</span>
+                            <span className="text-pink-300">❤️ {video.likes} likes</span>
+                            <span className="text-blue-300">💬 {video.comments} comments</span>
+                            <span className="text-gray-400">
+                              {new Date(video.lastWatchedAt).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="text-center bg-gradient-to-br from-purple-500/30 to-pink-500/30 backdrop-blur-sm p-4 rounded-xl border-2 border-purple-400/30 min-w-[100px]">
-                        <div
-                          className={`text-3xl font-black ${
-                            video.completionPercentage >= 90
-                              ? "text-green-400"
-                              : video.completionPercentage >= 50
-                              ? "text-yellow-400"
-                              : "text-orange-400"
-                          }`}
-                        >
-                          {video.completionPercentage}%
+                        
+                        <div className="text-center bg-gradient-to-br from-purple-500/30 to-pink-500/30 backdrop-blur-sm p-4 rounded-xl border-2 border-purple-400/30 min-w-[100px]">
+                          <div className="text-3xl font-black text-green-400">
+                            {video.completionPercentage}%
+                          </div>
+                          <div className="text-xs text-purple-200 mt-1">completed</div>
+                          <div className="text-xl mt-1">✅</div>
                         </div>
-                        <div className="text-xs text-purple-200 mt-1">completed</div>
-                        {video.completionPercentage >= 90 && <div className="text-xl mt-1">🎉</div>}
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">📺</div>
+                    <p className="text-xl text-gray-400">No completed videos yet!</p>
+                    <p className="text-sm text-gray-500 mt-2">Videos appear here when watched to 90% or more</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

@@ -75,15 +75,6 @@ export const Header: React.FC<HeaderProps> = ({
                     Admin
                   </a>
                 )}
-                {user?.parentEmail && !user?.isParent && (
-                  <a
-                    href="/parent-dashboard"
-                    className="text-sm bg-gradient-to-r from-blue-500 to-green-500 text-white px-3 py-1 rounded font-semibold hover:opacity-90 flex items-center gap-1"
-                    title="View your child's learning progress"
-                  >
-                    📊 Dashboard
-                  </a>
-                )}
               </>
             ) : (
               <>
