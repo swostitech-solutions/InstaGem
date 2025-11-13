@@ -56,7 +56,7 @@ interface Achievement {
 }
 
 const ParentDashboard: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [children, setChildren] = useState<ChildSummary[]>([]);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
@@ -195,12 +195,23 @@ const ParentDashboard: React.FC = () => {
                 </p>
               </div>
             </div>
-            <a
-              href="/"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-3 rounded-full font-bold shadow-lg transform hover:scale-110 transition flex items-center gap-2"
-            >
-              ← Home
-            </a>
+            <div className="flex items-center gap-3">
+              <a
+                href="/"
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-3 rounded-full font-bold shadow-lg transform hover:scale-110 transition flex items-center gap-2"
+              >
+                ← Home
+              </a>
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/", { replace: true });
+                }}
+                className="bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white px-6 py-3 rounded-full font-bold shadow-lg transform hover:scale-110 transition flex items-center gap-2"
+              >
+                🚪 Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
