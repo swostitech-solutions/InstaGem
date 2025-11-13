@@ -55,7 +55,7 @@ interface Achievement {
 }
 
 const ParentDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [children, setChildren] = useState<ChildSummary[]>([]);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [overview, setOverview] = useState<ChildOverview | null>(null);
@@ -65,6 +65,19 @@ const ParentDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "overview" | "progress" | "achievements"
   >("overview");
+
+  // Redirect non-authenticated or non-parent users
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.href = "/";
+      return;
+    }
+    // If user is a child (has parentEmail but is not a parent), redirect to home
+    if (user && user.parentEmail && !user.isParent) {
+      window.location.href = "/";
+      return;
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     fetchChildren();

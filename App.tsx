@@ -119,9 +119,14 @@ const App: React.FC = () => {
   // Load posts on mount and when auth changes
   useEffect(() => {
     if (isAuthenticated) {
+      // Redirect parents to dashboard
+      if (user?.isParent) {
+        window.location.href = "/parent-dashboard";
+        return;
+      }
       fetchPosts(1);
     }
-  }, [fetchPosts, isAuthenticated]);
+  }, [fetchPosts, isAuthenticated, user]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
