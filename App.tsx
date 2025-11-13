@@ -119,12 +119,16 @@ const App: React.FC = () => {
   // Load posts on mount and when auth changes
   useEffect(() => {
     if (isAuthenticated) {
-      // Redirect parents to dashboard
-      if (user?.isParent) {
+      // Only redirect parents if we're on the home page
+      // Don't redirect if already on parent-dashboard or other routes
+      if (user?.isParent && window.location.pathname === "/") {
         window.location.href = "/parent-dashboard";
         return;
       }
-      fetchPosts(1);
+      // Only fetch posts if not a parent (children only)
+      if (!user?.isParent) {
+        fetchPosts(1);
+      }
     }
   }, [fetchPosts, isAuthenticated, user]);
 

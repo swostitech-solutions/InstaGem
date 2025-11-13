@@ -66,18 +66,13 @@ const ParentDashboard: React.FC = () => {
     "overview" | "progress" | "achievements"
   >("overview");
 
-  // Redirect non-authenticated or non-parent users
+  // Redirect non-authenticated users
   useEffect(() => {
     if (!isAuthenticated) {
       window.location.href = "/";
       return;
     }
-    // If user is a child (has parentEmail but is not a parent), redirect to home
-    if (user && user.parentEmail && !user.isParent) {
-      window.location.href = "/";
-      return;
-    }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     fetchChildren();
