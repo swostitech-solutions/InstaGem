@@ -70,6 +70,13 @@ const App: React.FC = () => {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Clear session flag on component unmount (page refresh)
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('postsLoaded');
+    };
+  }, []);
+
   // Fetch posts from API (admin uploaded videos)
   const fetchPosts = useCallback(async (page: number = 1) => {
     try {
@@ -77,6 +84,10 @@ const App: React.FC = () => {
 
       // Fetch videos from API based on user's age
       const response = await videosAPI.getVideos(undefined, page);
+
+      // Get current liked videos from localStorage to avoid stale closure
+      const storedUser = localStorage.getItem("user");
+      const currentUser = storedUser ? JSON.parse(storedUser) : null;
 
       // Transform video data to match Post interface
       const videoPosts = response.data.map((video: any) => ({
@@ -95,7 +106,7 @@ const App: React.FC = () => {
         mediaType: "video" as const,
         caption: `📚 ${video.title}\n\n${video.description}\n\n🎯 Ages ${video.ageGroup} | ${video.category}`,
         likes: video.likes?.length || 0,
-        isLikedByUser: user?.likedVideos?.includes(video._id) || false,
+        isLikedByUser: currentUser?.likedVideos?.includes(video._id) || false,
         comments:
           video.comments?.map((c: any) => ({
             user: c.user?.username || "user",
@@ -117,13 +128,16 @@ const App: React.FC = () => {
     } finally {
       setIsLoadingPosts(false);
     }
-  }, [user]);
+  }, []); // Remove user dependency to prevent infinite loop
 
   // Load posts on mount and when auth changes
   useEffect(() => {
     // If still loading auth, wait
     if (loading) return;
 
+    // Only run once when authentication is determined
+    const hasRun = sessionStorage.getItem('postsLoaded');
+    
     // If authenticated
     if (isAuthenticated && user) {
       // Redirect parents to their dashboard
@@ -131,13 +145,17 @@ const App: React.FC = () => {
         navigate("/parent-dashboard", { replace: true });
         return;
       }
-      // Fetch posts for children
-      fetchPosts(1);
-    } else {
+      // Fetch posts for children (only if not already loaded this session)
+      if (!hasRun) {
+        fetchPosts(1);
+        sessionStorage.setItem('postsLoaded', 'true');
+      }
+    } else if (!isAuthenticated && !hasRun) {
       // Fetch posts for unauthenticated users (guests)
       fetchPosts(1);
+      sessionStorage.setItem('postsLoaded', 'true');
     }
-  }, [isAuthenticated, loading, user, navigate, fetchPosts]);
+  }, [isAuthenticated, loading, user, navigate]); // Remove fetchPosts from dependencies
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
