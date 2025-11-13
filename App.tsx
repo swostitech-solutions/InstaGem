@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Feed } from "./components/Feed";
 import { StoryTray } from "./components/StoryTray";
@@ -57,6 +58,7 @@ const generateExplorePosts = (
 
 const App: React.FC = () => {
   const { user, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [viewingStory, setViewingStory] = useState<Story | null>(null);
   const [commentingPost, setCommentingPost] = useState<PostType | null>(null);
@@ -118,11 +120,10 @@ const App: React.FC = () => {
 
   // Load posts on mount and when auth changes
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
       // Only redirect parents if we're on the home page
-      // Don't redirect if already on parent-dashboard or other routes
-      if (user?.isParent && window.location.pathname === "/") {
-        window.location.href = "/parent-dashboard";
+      if (user?.isParent) {
+        navigate("/parent-dashboard", { replace: true });
         return;
       }
       // Only fetch posts if not a parent (children only)
@@ -130,7 +131,7 @@ const App: React.FC = () => {
         fetchPosts(1);
       }
     }
-  }, [fetchPosts, isAuthenticated, user]);
+  }, [isAuthenticated, loading, user, navigate, fetchPosts]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);

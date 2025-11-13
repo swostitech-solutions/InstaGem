@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import * as analyticsAPI from "../api/analyticsAPI";
 import WatchHistory from "./WatchHistory";
@@ -56,6 +57,7 @@ interface Achievement {
 
 const ParentDashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [children, setChildren] = useState<ChildSummary[]>([]);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [overview, setOverview] = useState<ChildOverview | null>(null);
@@ -69,10 +71,10 @@ const ParentDashboard: React.FC = () => {
   // Redirect non-authenticated users
   useEffect(() => {
     if (!isAuthenticated) {
-      window.location.href = "/";
+      navigate("/", { replace: true });
       return;
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     fetchChildren();
