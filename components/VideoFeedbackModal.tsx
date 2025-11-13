@@ -98,7 +98,7 @@ export const VideoFeedbackModal: React.FC<VideoFeedbackModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 animate-fadeIn">
+    <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
       {/* Confetti Effect */}
       {showConfetti && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -119,41 +119,41 @@ export const VideoFeedbackModal: React.FC<VideoFeedbackModalProps> = ({
         </div>
       )}
 
-      <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 rounded-3xl shadow-2xl max-w-md w-full p-8 text-white relative transform animate-scaleIn">
-        {/* Close button */}
+      <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900 rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full p-4 sm:p-8 text-white relative transform animate-scaleIn max-h-[95vh] overflow-y-auto">
+        {/* Close button - Bigger touch target on mobile */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white/60 hover:text-white text-2xl font-bold transition-colors"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white/60 hover:text-white text-3xl sm:text-2xl font-bold transition-colors z-10 w-10 h-10 flex items-center justify-center"
         >
           ×
         </button>
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4 animate-bounce">🎉</div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-2">
+        {/* Header - Mobile optimized */}
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="text-5xl sm:text-6xl mb-3 sm:mb-4 animate-bounce">🎉</div>
+          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-2 px-2">
             Awesome Job, {user?.username || "Champ"}!
           </h2>
-          <p className="text-white/80">You watched the whole video! 🎥✨</p>
+          <p className="text-white/80 text-sm sm:text-base">You watched the whole video! 🎥✨</p>
         </div>
 
-        {/* Step 1: Star Rating */}
+        {/* Step 1: Star Rating - Mobile Optimized */}
         {step === "stars" && (
-          <div className="space-y-6 animate-slideInUp">
-            <h3 className="text-2xl font-bold text-center mb-6">
+          <div className="space-y-4 sm:space-y-6 animate-slideInUp">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">
               Rate this video! ⭐
             </h3>
             
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-2 sm:gap-3 px-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   onClick={() => handleStarClick(star)}
                   onMouseEnter={() => setHoveredStar(star)}
                   onMouseLeave={() => setHoveredStar(0)}
-                  className="transform transition-all duration-200 hover:scale-125 focus:outline-none"
+                  className="transform transition-all duration-200 hover:scale-125 active:scale-95 focus:outline-none touch-manipulation"
                 >
-                  <div className={`text-6xl transition-all ${
+                  <div className={`text-4xl sm:text-6xl transition-all ${
                     star <= (hoveredStar || starRating)
                       ? "filter drop-shadow-[0_0_8px_rgba(255,215,0,0.8)] scale-110"
                       : "opacity-30"
@@ -164,31 +164,31 @@ export const VideoFeedbackModal: React.FC<VideoFeedbackModalProps> = ({
               ))}
             </div>
 
-            <div className="text-center text-xl font-bold text-yellow-300 min-h-[30px]">
+            <div className="text-center text-lg sm:text-xl font-bold text-yellow-300 min-h-[25px] sm:min-h-[30px]">
               {getStarLabel(hoveredStar || starRating)}
             </div>
           </div>
         )}
 
-        {/* Step 2: Emoji Feeling */}
+        {/* Step 2: Emoji Feeling - Mobile Optimized */}
         {step === "emoji" && (
-          <div className="space-y-6 animate-slideInUp">
-            <h3 className="text-2xl font-bold text-center mb-6">
+          <div className="space-y-4 sm:space-y-6 animate-slideInUp">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">
               How did you feel? 😊
             </h3>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {EMOJI_OPTIONS.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => handleEmojiClick(option.id)}
-                  className={`relative p-4 rounded-2xl bg-gradient-to-br ${option.color} hover:scale-105 transform transition-all duration-200 group`}
+                  className={`relative p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br ${option.color} hover:scale-105 active:scale-95 transform transition-all duration-200 group touch-manipulation`}
                 >
-                  <div className="text-5xl mb-2 group-hover:animate-bounce">
+                  <div className="text-4xl sm:text-5xl mb-1 sm:mb-2 group-hover:animate-bounce">
                     {option.emoji}
                   </div>
-                  <div className="font-bold text-sm">{option.label}</div>
-                  <div className="absolute top-2 right-2 bg-white/20 rounded-full px-2 py-1 text-xs font-bold">
+                  <div className="font-bold text-xs sm:text-sm">{option.label}</div>
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-white/20 rounded-full px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs font-bold">
                     {option.points}
                   </div>
                 </button>
@@ -197,45 +197,45 @@ export const VideoFeedbackModal: React.FC<VideoFeedbackModalProps> = ({
           </div>
         )}
 
-        {/* Step 3: Topics Learned */}
+        {/* Step 3: Topics Learned - Mobile Optimized */}
         {step === "topics" && (
-          <div className="space-y-6 animate-slideInUp">
-            <h3 className="text-2xl font-bold text-center mb-4">
+          <div className="space-y-4 sm:space-y-6 animate-slideInUp">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
               What did you learn? 🎓
             </h3>
-            <p className="text-center text-white/70 text-sm mb-4">
+            <p className="text-center text-white/70 text-xs sm:text-sm mb-3 sm:mb-4">
               (Tap all that apply - +2 points each!)
             </p>
             
-            <div className="grid grid-cols-3 gap-2 max-h-[300px] overflow-y-auto">
+            <div className="grid grid-cols-3 gap-2 max-h-[250px] sm:max-h-[300px] overflow-y-auto pr-1">
               {TOPIC_OPTIONS.map((topic) => (
                 <button
                   key={topic.id}
                   onClick={() => handleTopicToggle(topic.id)}
-                  className={`p-3 rounded-xl border-2 transition-all duration-200 ${
+                  className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-200 touch-manipulation active:scale-95 ${
                     selectedTopics.includes(topic.id)
                       ? "bg-gradient-to-br from-green-500 to-emerald-600 border-white scale-105"
                       : "bg-white/10 border-white/30 hover:border-white/60"
                   }`}
                 >
-                  <div className={`text-3xl mb-1 ${selectedTopics.includes(topic.id) ? "animate-bounce" : ""}`}>
+                  <div className={`text-2xl sm:text-3xl mb-0.5 sm:mb-1 ${selectedTopics.includes(topic.id) ? "animate-bounce" : ""}`}>
                     {topic.emoji}
                   </div>
-                  <div className="text-xs font-semibold">{topic.label}</div>
+                  <div className="text-xs font-semibold leading-tight">{topic.label}</div>
                 </button>
               ))}
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={handleSkipTopics}
-                className="flex-1 py-3 px-4 bg-white/10 rounded-xl font-semibold hover:bg-white/20 transition-all"
+                className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 bg-white/10 rounded-xl font-semibold hover:bg-white/20 active:scale-95 transition-all touch-manipulation"
               >
                 Skip
               </button>
               <button
                 onClick={() => setStep("comment")}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-semibold hover:scale-105 transition-all shadow-lg"
+                className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-semibold hover:scale-105 active:scale-95 transition-all shadow-lg touch-manipulation"
               >
                 Next →
               </button>
@@ -243,13 +243,13 @@ export const VideoFeedbackModal: React.FC<VideoFeedbackModalProps> = ({
           </div>
         )}
 
-        {/* Step 4: Optional Comment */}
+        {/* Step 4: Optional Comment - Mobile Optimized */}
         {step === "comment" && (
-          <div className="space-y-6 animate-slideInUp">
-            <h3 className="text-2xl font-bold text-center mb-4">
+          <div className="space-y-4 sm:space-y-6 animate-slideInUp">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
               Anything else? 💭
             </h3>
-            <p className="text-center text-white/70 text-sm mb-4">
+            <p className="text-center text-white/70 text-xs sm:text-sm mb-3 sm:mb-4">
               (Optional - +10 bonus points for thoughtful feedback!)
             </p>
             
@@ -257,25 +257,25 @@ export const VideoFeedbackModal: React.FC<VideoFeedbackModalProps> = ({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Tell us what you thought..."
-              className="w-full p-4 bg-white/10 border-2 border-white/30 rounded-xl text-white placeholder-white/50 focus:border-white/60 focus:outline-none resize-none"
+              className="w-full p-3 sm:p-4 bg-white/10 border-2 border-white/30 rounded-xl text-white placeholder-white/50 focus:border-white/60 focus:outline-none resize-none text-sm sm:text-base"
               rows={4}
               maxLength={500}
             />
             
-            <div className="text-right text-sm text-white/60">
+            <div className="text-right text-xs sm:text-sm text-white/60">
               {comment.length}/500
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={handleSubmit}
-                className="flex-1 py-4 px-6 bg-white/10 rounded-xl font-semibold hover:bg-white/20 transition-all"
+                className="flex-1 py-3 sm:py-4 px-4 sm:px-6 bg-white/10 rounded-xl font-semibold hover:bg-white/20 active:scale-95 transition-all touch-manipulation text-sm sm:text-base"
               >
                 Skip
               </button>
               <button
                 onClick={handleSubmit}
-                className="flex-1 py-4 px-6 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-2xl animate-pulse"
+                className="flex-1 py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-xl font-bold text-base sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl animate-pulse touch-manipulation"
               >
                 🎁 Get Reward!
               </button>

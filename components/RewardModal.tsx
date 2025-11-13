@@ -31,7 +31,7 @@ export const RewardModal: React.FC<RewardModalProps> = ({ rewards, onClose }) =>
   }, [rewards.newBadges.length]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-3 sm:p-4">
       {/* Epic Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(30)].map((_, i) => (
@@ -50,95 +50,95 @@ export const RewardModal: React.FC<RewardModalProps> = ({ rewards, onClose }) =>
         ))}
       </div>
 
-      <div className="relative max-w-lg w-full">
-        {/* Main Reward Card */}
-        <div className={`bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-3xl shadow-2xl p-8 text-white transform transition-all duration-700 ${
+      <div className="relative max-w-lg w-full max-h-[95vh] overflow-y-auto">
+        {/* Main Reward Card - Mobile Optimized */}
+        <div className={`bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 text-white transform transition-all duration-700 ${
           showContent ? "scale-100 opacity-100" : "scale-50 opacity-0"
         }`}>
           
-          {/* Close Button */}
+          {/* Close Button - Bigger touch target */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-2xl transition-all"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 bg-black/30 hover:bg-black/50 active:scale-95 rounded-full flex items-center justify-center text-2xl sm:text-3xl transition-all touch-manipulation z-10"
           >
             ×
           </button>
 
-          {/* Main Content */}
-          <div className="text-center space-y-6">
+          {/* Main Content - Mobile Optimized */}
+          <div className="text-center space-y-4 sm:space-y-6">
             {/* Epic Title */}
-            <div className="space-y-2">
-              <div className="text-7xl animate-bounce">
+            <div className="space-y-1 sm:space-y-2">
+              <div className="text-5xl sm:text-7xl animate-bounce">
                 {rewards.leveledUp ? "🚀" : "🎉"}
               </div>
-              <h2 className="text-4xl font-black">
+              <h2 className="text-3xl sm:text-4xl font-black">
                 {rewards.leveledUp ? "LEVEL UP!" : "AMAZING!"}
               </h2>
             </div>
 
             {/* Points Earned */}
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all">
-              <div className="text-6xl font-black text-yellow-300 animate-pulse">
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 transform hover:scale-105 active:scale-95 transition-all">
+              <div className="text-5xl sm:text-6xl font-black text-yellow-300 animate-pulse">
                 +{rewards.pointsEarned}
               </div>
-              <div className="text-xl font-bold mt-2">Points Earned!</div>
+              <div className="text-lg sm:text-xl font-bold mt-1 sm:mt-2">Points Earned!</div>
             </div>
 
             {/* Level & Total Points */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl font-bold text-purple-300">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4">
+                <div className="text-2xl sm:text-3xl font-bold text-purple-300">
                   {rewards.currentLevel}
                 </div>
-                <div className="text-sm">Current Level</div>
+                <div className="text-xs sm:text-sm mt-1">Current Level</div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
-                <div className="text-3xl font-bold text-green-300">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4">
+                <div className="text-2xl sm:text-3xl font-bold text-green-300">
                   {rewards.totalPoints}
                 </div>
-                <div className="text-sm">Total Points</div>
+                <div className="text-xs sm:text-sm mt-1">Total Points</div>
               </div>
             </div>
 
             {/* Title */}
             {rewards.leveledUp && (
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-4 transform animate-pulse">
-                <div className="text-sm opacity-80">New Title Unlocked!</div>
-                <div className="text-2xl font-bold mt-1">{rewards.title}</div>
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-3 sm:p-4 transform animate-pulse">
+                <div className="text-xs sm:text-sm opacity-80">New Title Unlocked!</div>
+                <div className="text-xl sm:text-2xl font-bold mt-1">{rewards.title}</div>
               </div>
             )}
 
             {/* Streak */}
             {rewards.currentStreak > 0 && (
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4">
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-3xl">🔥</span>
-                  <span className="text-2xl font-bold">{rewards.currentStreak} Day Streak!</span>
+                  <span className="text-2xl sm:text-3xl">🔥</span>
+                  <span className="text-xl sm:text-2xl font-bold">{rewards.currentStreak} Day Streak!</span>
                 </div>
-                <div className="text-sm opacity-80 mt-1">
+                <div className="text-xs sm:text-sm opacity-80 mt-1">
                   Keep it up! Come back tomorrow!
                 </div>
               </div>
             )}
 
-            {/* New Badges */}
+            {/* New Badges - Mobile Optimized */}
             {rewards.newBadges.length > 0 && showBadges && (
-              <div className="space-y-4 animate-slideInUp">
-                <div className="text-2xl font-bold">🏆 New Badges Unlocked!</div>
-                <div className="space-y-3">
+              <div className="space-y-3 sm:space-y-4 animate-slideInUp">
+                <div className="text-xl sm:text-2xl font-bold">🏆 New Badges Unlocked!</div>
+                <div className="space-y-2 sm:space-y-3">
                   {rewards.newBadges.map((badge, index) => (
                     <div
                       key={badge.id}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 transform hover:scale-105 transition-all"
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-3 sm:p-4 transform hover:scale-105 active:scale-95 transition-all"
                       style={{ animationDelay: `${index * 200}ms` }}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="text-5xl">{badge.icon}</div>
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <div className="text-4xl sm:text-5xl">{badge.icon}</div>
                         <div className="text-left flex-1">
-                          <div className="font-bold text-lg">{badge.name}</div>
-                          <div className="text-sm opacity-90">{badge.description}</div>
+                          <div className="font-bold text-base sm:text-lg">{badge.name}</div>
+                          <div className="text-xs sm:text-sm opacity-90 leading-tight">{badge.description}</div>
                         </div>
-                        <div className="bg-white/30 rounded-full px-3 py-1 text-sm font-bold">
+                        <div className="bg-white/30 rounded-full px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm font-bold">
                           +{badge.points}
                         </div>
                       </div>
@@ -148,10 +148,10 @@ export const RewardModal: React.FC<RewardModalProps> = ({ rewards, onClose }) =>
               </div>
             )}
 
-            {/* Continue Button */}
+            {/* Continue Button - Mobile Optimized */}
             <button
               onClick={onClose}
-              className="w-full py-4 px-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-bold text-xl hover:scale-105 transition-all shadow-2xl mt-6"
+              className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl font-bold text-lg sm:text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl mt-4 sm:mt-6 touch-manipulation"
             >
               {rewards.leveledUp ? "🎮 Continue Learning!" : "🚀 Keep Going!"}
             </button>

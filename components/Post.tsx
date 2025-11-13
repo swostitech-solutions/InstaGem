@@ -44,6 +44,10 @@ export const Post: React.FC<PostProps> = ({
   const [showControls, setShowControls] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Track actual watch time (not seeking)
+  const watchedSegmentsRef = useRef<Set<number>>(new Set());
+  const actualWatchPercentageRef = useRef<number>(0);
 
   // Update like state when post prop changes
   useEffect(() => {
@@ -67,8 +71,19 @@ export const Post: React.FC<PostProps> = ({
       setVideoProgress(progress);
       setCurrentTime(video.currentTime);
 
-      // Show feedback modal when 90% completed and hasn't given feedback yet
-      if (progress >= 90 && !hasGivenFeedback && !showFeedbackModal) {
+      // Track actual watched segments (only when playing, not seeking)
+      if (!video.paused && !video.seeking) {
+        const currentSecond = Math.floor(video.currentTime);
+        watchedSegmentsRef.current.add(currentSecond);
+        
+        // Calculate actual watch percentage
+        const totalSeconds = Math.floor(video.duration);
+        const watchedSeconds = watchedSegmentsRef.current.size;
+        actualWatchPercentageRef.current = (watchedSeconds / totalSeconds) * 100;
+      }
+
+      // Show feedback modal when 90% ACTUALLY WATCHED (not just seeked)
+      if (actualWatchPercentageRef.current >= 90 && !hasGivenFeedback && !showFeedbackModal) {
         setShowFeedbackModal(true);
       }
     };
@@ -335,7 +350,7 @@ export const Post: React.FC<PostProps> = ({
               onClick={handleVideoClick}
             />
 
-            {/* Play/Pause Overlay */}
+            {/* Play/Pause Overlay - Mobile Optimized */}
             <div 
               className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 transition-opacity pointer-events-none ${
                 showControls || !isPlaying ? 'opacity-100' : 'opacity-0'
@@ -347,61 +362,61 @@ export const Post: React.FC<PostProps> = ({
                     e.stopPropagation();
                     togglePlayPause();
                   }}
-                  className="pointer-events-auto bg-white/90 rounded-full p-4 hover:bg-white transition-all transform hover:scale-110"
+                  className="pointer-events-auto bg-white/90 rounded-full p-3 sm:p-4 hover:bg-white transition-all transform hover:scale-110 active:scale-95"
                   aria-label="Play"
                 >
-                  <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-black" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                   </svg>
                 </button>
               )}
             </div>
 
-            {/* Video Controls Bar */}
+            {/* Video Controls Bar - Mobile Optimized */}
             <div 
-              className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity ${
+              className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2 sm:p-4 transition-opacity ${
                 showControls ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              {/* Progress Bar */}
-              <div className="mb-3">
+              {/* Progress Bar - Taller for mobile touch */}
+              <div className="mb-2 sm:mb-3 px-1">
                 <input
                   type="range"
                   min="0"
                   max={duration || 0}
                   value={currentTime}
                   onChange={handleSeek}
-                  className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer slider"
+                  className="w-full h-2 sm:h-1 bg-white/30 rounded-lg appearance-none cursor-pointer slider touch-manipulation"
                   style={{
                     background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${(currentTime / duration) * 100}%, rgba(255,255,255,0.3) ${(currentTime / duration) * 100}%, rgba(255,255,255,0.3) 100%)`
                   }}
                 />
               </div>
 
-              {/* Controls Row */}
-              <div className="flex items-center justify-between text-white">
+              {/* Controls Row - Bigger touch targets for mobile */}
+              <div className="flex items-center justify-between text-white px-1">
                 {/* Left: Play/Pause & Time */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       togglePlayPause();
                     }}
-                    className="hover:scale-110 transition-transform"
+                    className="hover:scale-110 active:scale-95 transition-transform p-1 touch-manipulation"
                     aria-label={isPlaying ? "Pause" : "Play"}
                   >
                     {isPlaying ? (
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V4zm8 0a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V4z" />
                       </svg>
                     ) : (
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                       </svg>
                     )}
                   </button>
 
-                  <span className="text-sm font-medium">
+                  <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
                     {formatTime(currentTime)} / {formatTime(duration)}
                   </span>
                 </div>
@@ -412,13 +427,13 @@ export const Post: React.FC<PostProps> = ({
                     e.stopPropagation();
                     toggleMute();
                   }}
-                  className="hover:scale-110 transition-transform"
+                  className="hover:scale-110 active:scale-95 transition-transform p-1 touch-manipulation"
                   aria-label={isMuted ? "Unmute" : "Mute"}
                 >
                   {isMuted ? (
-                    <VolumeOffIcon className="w-6 h-6" />
+                    <VolumeOffIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                   ) : (
-                    <VolumeUpIcon className="w-6 h-6" />
+                    <VolumeUpIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                   )}
                 </button>
               </div>
@@ -517,12 +532,13 @@ export const Post: React.FC<PostProps> = ({
         />
       )}
 
-      {/* Custom Slider Styles */}
+      {/* Custom Slider Styles - Mobile Optimized */}
       <style>{`
+        /* Webkit browsers (Chrome, Safari, Edge) */
         .slider::-webkit-slider-thumb {
           appearance: none;
-          width: 14px;
-          height: 14px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           background: #ef4444;
           cursor: pointer;
@@ -530,14 +546,16 @@ export const Post: React.FC<PostProps> = ({
           transition: all 0.2s;
         }
         
-        .slider::-webkit-slider-thumb:hover {
-          transform: scale(1.2);
+        .slider::-webkit-slider-thumb:hover,
+        .slider::-webkit-slider-thumb:active {
+          transform: scale(1.3);
           box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
         }
         
+        /* Firefox */
         .slider::-moz-range-thumb {
-          width: 14px;
-          height: 14px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           background: #ef4444;
           cursor: pointer;
@@ -546,9 +564,29 @@ export const Post: React.FC<PostProps> = ({
           transition: all 0.2s;
         }
         
-        .slider::-moz-range-thumb:hover {
-          transform: scale(1.2);
+        .slider::-moz-range-thumb:hover,
+        .slider::-moz-range-thumb:active {
+          transform: scale(1.3);
           box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+        }
+
+        /* Mobile: Larger touch targets */
+        @media (max-width: 640px) {
+          .slider::-webkit-slider-thumb {
+            width: 18px;
+            height: 18px;
+          }
+          
+          .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        /* Ensure smooth touch interactions */
+        .touch-manipulation {
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
         }
       `}</style>
     </article>
