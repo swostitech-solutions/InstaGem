@@ -40,11 +40,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 bg-opacity-95 flex items-center justify-center z-50 animate-fade-in overflow-y-auto py-8">
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 max-w-md w-full mx-4 animate-slide-in-up shadow-2xl border-2 border-blue-500">
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 bg-opacity-95 flex items-center justify-center z-50 overflow-y-auto py-8">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 max-w-md w-full mx-4 animate-scaleIn shadow-2xl border-2 border-blue-500 max-h-[95vh] overflow-y-auto">
         {/* Header with fun emoji */}
         <div className="text-center mb-6">
-          <div className="text-6xl mb-3 animate-bounce">�📱</div>
+          <div className="text-6xl mb-3">📱</div>
           <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Welcome Back!
           </h2>

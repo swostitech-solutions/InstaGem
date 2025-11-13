@@ -8,7 +8,7 @@
 }
 
 @keyframes slide-in-up {
-  from { transform: translateY(100%); opacity: 0; }
+  from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
@@ -17,7 +17,7 @@
 }
 
 .animate-slide-in-up {
-  animation: slide-in-up 0.3s ease-out;
+  animation: slide-in-up 0.4s ease-out;
 }
 
 @keyframes fadeIn {
@@ -26,7 +26,7 @@
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.8); opacity: 0; }
+  from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
 
@@ -35,5 +35,5 @@
 }
 
 .animate-scaleIn {
-  animation: scaleIn 0.4s ease-out;
+  animation: scaleIn 0.3s ease-out;
 }

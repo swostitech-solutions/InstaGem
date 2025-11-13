@@ -79,15 +79,15 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 bg-opacity-95 flex items-start justify-center z-50 animate-fade-in overflow-y-auto py-4 px-4">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 bg-opacity-95 flex items-center justify-center z-50 overflow-y-auto py-4 px-4">
       <div
-        className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-6 max-w-lg w-full my-auto animate-slide-in-up shadow-2xl border-2 border-purple-500 max-h-[95vh] overflow-y-auto"
+        className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-6 max-w-lg w-full animate-scaleIn shadow-2xl border-2 border-purple-500 max-h-[95vh] overflow-y-auto"
         style={{ scrollbarWidth: "thin", scrollbarColor: "#8B5CF6 #1F2937" }}
       >
         {/* Close button - repositioned */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition z-10 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center"
+          className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition z-10 bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700 active:scale-95"
         >
           ×
         </button>
@@ -380,20 +380,12 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
           </button>
         </div>
 
-        {/* Fun decorative elements */}
+        {/* Fun decorative elements - Optimized */}
         <div className="mt-3 flex justify-center gap-2 text-xl opacity-50 pb-2">
-          <span className="animate-bounce" style={{ animationDelay: "0s" }}>
-            🌟
-          </span>
-          <span className="animate-bounce" style={{ animationDelay: "0.1s" }}>
-            💫
-          </span>
-          <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
-            ✨
-          </span>
-          <span className="animate-bounce" style={{ animationDelay: "0.3s" }}>
-            ⭐
-          </span>
+          <span>🌟</span>
+          <span>💫</span>
+          <span>✨</span>
+          <span>⭐</span>
         </div>
       </div>
     </div>
