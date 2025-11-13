@@ -60,35 +60,35 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [initialCheckDone, setInitialCheckDone] = useState(false);
-
-  // Load user from localStorage on mount - synchronously to prevent flicker
-  useEffect(() => {
-    const initAuth = () => {
-      const storedToken = localStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
-
-      if (storedToken && storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          setToken(storedToken);
-          setUser(parsedUser);
-        } catch (error) {
-          console.error("Error parsing stored user:", error);
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-        }
+  // Initialize auth state synchronously from localStorage to prevent flicker
+  const getInitialAuth = () => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    
+    if (storedToken && storedUser) {
+      try {
+        return {
+          token: storedToken,
+          user: JSON.parse(storedUser),
+        };
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       }
-      
-      // Set loading to false immediately, no setTimeout
-      setLoading(false);
-      setInitialCheckDone(true);
-    };
+    }
+    return { token: null, user: null };
+  };
 
-    initAuth();
+  const initialAuth = getInitialAuth();
+  
+  const [user, setUser] = useState<User | null>(initialAuth.user);
+  const [token, setToken] = useState<string | null>(initialAuth.token);
+  const [loading, setLoading] = useState(false); // No loading needed - we init synchronously
+
+  useEffect(() => {
+    // This effect is now just for cleanup/validation if needed
+    // Initial auth is already loaded synchronously above
   }, []);
 
   const login = async (email: string, password: string) => {

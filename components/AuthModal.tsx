@@ -6,21 +6,22 @@ const AuthModal: React.FC = () => {
   const [showLogin, setShowLogin] = useState(true);
 
   return (
-    <div className="fixed inset-0 bg-black">
+    <>
       {/* Keep both mounted to prevent unmount flicker, hide with CSS */}
-      <div className={showLogin ? "block" : "hidden"}>
+      {/* Use pointer-events-none on hidden to prevent blocking clicks */}
+      <div className={showLogin ? "block" : "hidden pointer-events-none"}>
         <LoginModal
           onClose={() => {}} // Can't close - auth is required
           onSwitchToRegister={() => setShowLogin(false)}
         />
       </div>
-      <div className={!showLogin ? "block" : "hidden"}>
+      <div className={!showLogin ? "block" : "hidden pointer-events-none"}>
         <RegisterModal
           onClose={() => {}} // Can't close - auth is required
           onSwitchToLogin={() => setShowLogin(true)}
         />
       </div>
-    </div>
+    </>
   );
 };
 
