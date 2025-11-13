@@ -9,6 +9,7 @@ import { VolumeUpIcon } from "./icons/VolumeUpIcon";
 import { VolumeOffIcon } from "./icons/VolumeOffIcon";
 import { userLookup } from "../constants";
 import * as postsAPI from "../api/postsAPI";
+import * as videosAPI from "../api/videosAPI";
 import { useAuth } from "../context/AuthContext";
 import { useVideoTracking } from "../hooks/useVideoTracking";
 
@@ -24,12 +25,18 @@ export const Post: React.FC<PostProps> = ({
   onProfileClick,
 }) => {
   const { isAuthenticated, user } = useAuth();
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.isLikedByUser || false);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [isSaved, setIsSaved] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Update like state when post prop changes
+  useEffect(() => {
+    setIsLiked(post.isLikedByUser || false);
+    setLikesCount(post.likes);
+  }, [post.id, post.isLikedByUser, post.likes]);
 
   // Track video watch progress (only for videos)
   useVideoTracking({
@@ -46,11 +53,20 @@ export const Post: React.FC<PostProps> = ({
     }
 
     try {
-      await postsAPI.likePost(post.id);
-      setIsLiked(!isLiked);
-      setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+      // Use different API based on media type
+      if (post.mediaType === 'video') {
+        const response = await videosAPI.likeVideo(post.id);
+        setIsLiked(response.isLiked);
+        setLikesCount(response.likes);
+      } else {
+        await postsAPI.likePost(post.id);
+        setIsLiked(!isLiked);
+        setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+      }
     } catch (error) {
       console.error("Error toggling like:", error);
+      // Revert on error
+      setIsLiked(isLiked);
     }
   };
   const toggleSave = () => setIsSaved(!isSaved);
@@ -64,11 +80,17 @@ export const Post: React.FC<PostProps> = ({
   const handleShare = async () => {
     if (isSharing) return;
 
-    const postUrl = `${window.location.origin}/#post/${post.id}`;
+    // Generate different links based on media type
+    const shareUrl = post.mediaType === 'video' 
+      ? `${window.location.origin}/video/${post.id}`
+      : `${window.location.origin}/#post/${post.id}`;
+    
     const shareData = {
-      title: `InstaGem post by ${post.user.username}`,
+      title: post.mediaType === 'video' 
+        ? `Educational Video: ${post.caption.split('\n')[0].replace('📚 ', '')}`
+        : `InstaGem post by ${post.user.username}`,
       text: post.caption,
-      url: postUrl,
+      url: shareUrl,
     };
 
     setIsSharing(true);
@@ -77,8 +99,8 @@ export const Post: React.FC<PostProps> = ({
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(postUrl);
-        alert("Link copied to clipboard!");
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard! Share it on WhatsApp, social media, or anywhere you like!");
       }
     } catch (error: any) {
       // Don't log an error if the user cancels the share sheet

@@ -95,6 +95,7 @@ const App: React.FC = () => {
         mediaType: "video" as const,
         caption: `📚 ${video.title}\n\n${video.description}\n\n🎯 Ages ${video.ageGroup} | ${video.category}`,
         likes: video.likes?.length || 0,
+        isLikedByUser: user?.likedVideos?.includes(video._id) || false,
         comments:
           video.comments?.map((c: any) => ({
             user: c.user?.username || "user",
@@ -150,8 +151,15 @@ const App: React.FC = () => {
 
     try {
       if (isAuthenticated && user) {
-        // Add comment via API
-        await postsAPI.addComment(postId, commentText);
+        // Find the post to determine if it's a video or regular post
+        const post = posts.find(p => p.id === postId) || commentingPost;
+        
+        // Add comment via appropriate API
+        if (post?.mediaType === 'video') {
+          await videosAPI.addComment(postId, commentText);
+        } else {
+          await postsAPI.addComment(postId, commentText);
+        }
 
         // Update local state
         const newComment = { user: user.username, text: commentText };

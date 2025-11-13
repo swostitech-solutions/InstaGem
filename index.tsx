@@ -9,6 +9,7 @@ import { PrivacyPolicy } from "./components/legal/PrivacyPolicy";
 import { ContentGuidelines } from "./components/legal/ContentGuidelines";
 import AdminDashboard from "./components/AdminDashboard";
 import ParentDashboard from "./components/ParentDashboard";
+import { VideoShareView } from "./components/VideoShareView";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -22,6 +23,7 @@ root.render(
       <AuthProvider>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/video/:videoId" element={<VideoShareView />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/parent-dashboard" element={<ParentDashboard />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
