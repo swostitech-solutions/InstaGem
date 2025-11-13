@@ -63,8 +63,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
 
-  // Load user from localStorage on mount
+  // Load user from localStorage on mount - synchronously to prevent flicker
   useEffect(() => {
     const initAuth = () => {
       const storedToken = localStorage.getItem("token");
@@ -81,8 +82,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           localStorage.removeItem("user");
         }
       }
-      // Use setTimeout to prevent flickering
-      setTimeout(() => setLoading(false), 100);
+      
+      // Set loading to false immediately, no setTimeout
+      setLoading(false);
+      setInitialCheckDone(true);
     };
 
     initAuth();
