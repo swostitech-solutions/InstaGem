@@ -15,9 +15,26 @@ const verifyParentAccess = async (req, res, next) => {
       return res.status(404).json({ message: 'Child not found' });
     }
 
-    // Check if the current user is the parent (stored in child's parentEmail)
-    if (child.parentEmail !== req.user.email && !req.user.isAdmin) {
-      return res.status(403).json({ message: 'Not authorized to view this child\'s data' });
+    // Check access:
+    // 1. If user is admin, allow
+    // 2. If childId matches req.user._id (viewing own data), allow
+    // 3. If req.user has same parentEmail as child (siblings), allow
+    // 4. If req.user.email matches child.parentEmail (parent viewing), allow
+    const isAdmin = req.user.isAdmin;
+    const isSelf = child._id.toString() === req.user._id.toString();
+    const isSibling = req.user.parentEmail && req.user.parentEmail === child.parentEmail;
+    const isParent = child.parentEmail && req.user.parentEmail === child.parentEmail;
+    
+    if (!isAdmin && !isSelf && !isSibling && !isParent) {
+      return res.status(403).json({ 
+        message: 'Not authorized to view this child\'s data',
+        debug: {
+          childId: child._id,
+          userId: req.user._id,
+          childParentEmail: child.parentEmail,
+          userParentEmail: req.user.parentEmail
+        }
+      });
     }
 
     req.child = child;
