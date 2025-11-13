@@ -38,7 +38,12 @@ export const Post: React.FC<PostProps> = ({
   const [rewards, setRewards] = useState<any>(null);
   const [hasGivenFeedback, setHasGivenFeedback] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [showControls, setShowControls] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update like state when post prop changes
   useEffect(() => {
@@ -60,6 +65,7 @@ export const Post: React.FC<PostProps> = ({
     const handleTimeUpdate = () => {
       const progress = (video.currentTime / video.duration) * 100;
       setVideoProgress(progress);
+      setCurrentTime(video.currentTime);
 
       // Show feedback modal when 90% completed and hasn't given feedback yet
       if (progress >= 90 && !hasGivenFeedback && !showFeedbackModal) {
@@ -67,9 +73,28 @@ export const Post: React.FC<PostProps> = ({
       }
     };
 
+    const handleLoadedMetadata = () => {
+      setDuration(video.duration);
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+    };
+
     video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
     };
   }, [post.mediaType, post.id, isAuthenticated, hasGivenFeedback, showFeedbackModal]);
 
@@ -103,6 +128,52 @@ export const Post: React.FC<PostProps> = ({
     if (videoRef.current) {
       videoRef.current.muted = !videoRef.current.muted;
       setIsMuted(videoRef.current.muted);
+    }
+  };
+
+  const togglePlayPause = () => {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (videoRef.current) {
+      const newTime = parseFloat(e.target.value);
+      videoRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    if (isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleVideoClick = () => {
+    togglePlayPause();
+    showControlsTemporarily();
+  };
+
+  const showControlsTemporarily = () => {
+    setShowControls(true);
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    controlsTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 3000);
+  };
+
+  const handleMouseMove = () => {
+    if (post.mediaType === 'video') {
+      showControlsTemporarily();
     }
   };
 
@@ -166,15 +237,17 @@ export const Post: React.FC<PostProps> = ({
       ([entry]) => {
         if (videoRef.current) {
           if (entry.isIntersecting) {
+            // Auto-play when in view
             videoRef.current
               .play()
               .catch((error) => console.log("Autoplay was prevented:", error));
           } else {
+            // Auto-pause when out of view
             videoRef.current.pause();
           }
         }
       },
-      { threshold: 0.5 } // 50% of the video must be visible to play
+      { threshold: 0.5 } // 50% of the video must be visible
     );
 
     if (videoRef.current) {
@@ -184,6 +257,9 @@ export const Post: React.FC<PostProps> = ({
     return () => {
       if (videoRef.current) {
         observer.unobserve(videoRef.current);
+      }
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
       }
     };
   }, []);
@@ -243,26 +319,110 @@ export const Post: React.FC<PostProps> = ({
             className="w-full object-cover"
           />
         ) : (
-          <div className="relative">
+          <div 
+            className="relative" 
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setShowControls(true)}
+            onMouseLeave={() => setShowControls(false)}
+          >
             <video
               ref={videoRef}
               src={post.mediaUrl}
               loop
               muted={isMuted}
               playsInline
-              className="w-full"
+              className="w-full cursor-pointer"
+              onClick={handleVideoClick}
             />
-            <button
-              onClick={toggleMute}
-              className="absolute bottom-4 right-4 bg-black bg-opacity-50 rounded-full p-2"
-              aria-label={isMuted ? "Unmute" : "Mute"}
+
+            {/* Play/Pause Overlay */}
+            <div 
+              className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 transition-opacity pointer-events-none ${
+                showControls || !isPlaying ? 'opacity-100' : 'opacity-0'
+              }`}
             >
-              {isMuted ? (
-                <VolumeOffIcon className="w-4 h-4" />
-              ) : (
-                <VolumeUpIcon className="w-4 h-4" />
+              {!isPlaying && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    togglePlayPause();
+                  }}
+                  className="pointer-events-auto bg-white/90 rounded-full p-4 hover:bg-white transition-all transform hover:scale-110"
+                  aria-label="Play"
+                >
+                  <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                  </svg>
+                </button>
               )}
-            </button>
+            </div>
+
+            {/* Video Controls Bar */}
+            <div 
+              className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity ${
+                showControls ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {/* Progress Bar */}
+              <div className="mb-3">
+                <input
+                  type="range"
+                  min="0"
+                  max={duration || 0}
+                  value={currentTime}
+                  onChange={handleSeek}
+                  className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer slider"
+                  style={{
+                    background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${(currentTime / duration) * 100}%, rgba(255,255,255,0.3) ${(currentTime / duration) * 100}%, rgba(255,255,255,0.3) 100%)`
+                  }}
+                />
+              </div>
+
+              {/* Controls Row */}
+              <div className="flex items-center justify-between text-white">
+                {/* Left: Play/Pause & Time */}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePlayPause();
+                    }}
+                    className="hover:scale-110 transition-transform"
+                    aria-label={isPlaying ? "Pause" : "Play"}
+                  >
+                    {isPlaying ? (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5 4a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V4zm8 0a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2h-2a2 2 0 01-2-2V4z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                      </svg>
+                    )}
+                  </button>
+
+                  <span className="text-sm font-medium">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+                </div>
+
+                {/* Right: Mute Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMute();
+                  }}
+                  className="hover:scale-110 transition-transform"
+                  aria-label={isMuted ? "Unmute" : "Mute"}
+                >
+                  {isMuted ? (
+                    <VolumeOffIcon className="w-6 h-6" />
+                  ) : (
+                    <VolumeUpIcon className="w-6 h-6" />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -356,6 +516,41 @@ export const Post: React.FC<PostProps> = ({
           onClose={() => setShowRewardModal(false)}
         />
       )}
+
+      {/* Custom Slider Styles */}
+      <style>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #ef4444;
+          cursor: pointer;
+          box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+          transition: all 0.2s;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+          transform: scale(1.2);
+          box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+        }
+        
+        .slider::-moz-range-thumb {
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #ef4444;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+          transition: all 0.2s;
+        }
+        
+        .slider::-moz-range-thumb:hover {
+          transform: scale(1.2);
+          box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+        }
+      `}</style>
     </article>
   );
 };
