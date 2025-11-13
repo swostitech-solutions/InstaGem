@@ -59,8 +59,10 @@ export const WatchHistory: React.FC<WatchHistoryProps> = ({ childId }) => {
 
       setHasMore(response.data.hasMore);
       setPage(pageNum);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching watch history:", error);
+      console.error("Error details:", error.response?.data);
+      console.error("Error status:", error.response?.status);
     } finally {
       setLoading(false);
     }
@@ -70,8 +72,10 @@ export const WatchHistory: React.FC<WatchHistoryProps> = ({ childId }) => {
     try {
       const response = await analyticsAPI.getChildCategoryProgress(childId);
       setCategories(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching categories:", error);
+      console.error("Error details:", error.response?.data);
+      console.error("Error status:", error.response?.status);
     }
   };
 
