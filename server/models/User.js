@@ -70,6 +70,81 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Video',
     }],
+    // 🎮 GAMIFICATION STATS - Super Epic!
+    gamification: {
+      totalPoints: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      currentLevel: {
+        type: Number,
+        default: 1,
+        min: 1
+      },
+      currentStreak: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      longestStreak: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      lastActivityDate: {
+        type: Date,
+        default: Date.now
+      },
+      videosCompleted: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      feedbackGiven: {
+        type: Number,
+        default: 0,
+        min: 0
+      },
+      // Unlocked badges
+      badges: [{
+        badgeId: String,
+        badgeName: String,
+        unlockedAt: {
+          type: Date,
+          default: Date.now
+        },
+        description: String,
+        icon: String
+      }],
+      // Category mastery (percentage completed per category)
+      categoryProgress: {
+        Math: { type: Number, default: 0 },
+        Science: { type: Number, default: 0 },
+        Reading: { type: Number, default: 0 },
+        Writing: { type: Number, default: 0 },
+        Language: { type: Number, default: 0 },
+        Music: { type: Number, default: 0 },
+        Art: { type: Number, default: 0 },
+        'Social Studies': { type: Number, default: 0 },
+        'Life Skills': { type: Number, default: 0 },
+        'Physical Education': { type: Number, default: 0 },
+        Technology: { type: Number, default: 0 },
+        'Critical Thinking': { type: Number, default: 0 }
+      },
+      // Daily/weekly challenges completed
+      challengesCompleted: {
+        type: Number,
+        default: 0
+      },
+      // Favorite categories (based on feedback)
+      favoriteCategories: [String],
+      // Title (based on level)
+      title: {
+        type: String,
+        default: 'Beginner Explorer'
+      }
+    },
   },
   {
     timestamps: true,

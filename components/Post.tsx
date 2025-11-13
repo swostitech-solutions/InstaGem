@@ -10,8 +10,11 @@ import { VolumeOffIcon } from "./icons/VolumeOffIcon";
 import { userLookup } from "../constants";
 import * as postsAPI from "../api/postsAPI";
 import * as videosAPI from "../api/videosAPI";
+import * as feedbackAPI from "../api/feedbackAPI";
 import { useAuth } from "../context/AuthContext";
 import { useVideoTracking } from "../hooks/useVideoTracking";
+import { VideoFeedbackModal } from "./VideoFeedbackModal";
+import { RewardModal } from "./RewardModal";
 
 interface PostProps {
   post: PostType;
@@ -30,6 +33,11 @@ export const Post: React.FC<PostProps> = ({
   const [isSaved, setIsSaved] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showRewardModal, setShowRewardModal] = useState(false);
+  const [rewards, setRewards] = useState<any>(null);
+  const [hasGivenFeedback, setHasGivenFeedback] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Update like state when post prop changes
@@ -43,6 +51,27 @@ export const Post: React.FC<PostProps> = ({
     videoId: post.id,
     videoElement: post.mediaType === 'video' ? videoRef.current : null,
   });
+
+  // Monitor video progress and show feedback modal when completed
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || post.mediaType !== 'video' || !isAuthenticated) return;
+
+    const handleTimeUpdate = () => {
+      const progress = (video.currentTime / video.duration) * 100;
+      setVideoProgress(progress);
+
+      // Show feedback modal when 90% completed and hasn't given feedback yet
+      if (progress >= 90 && !hasGivenFeedback && !showFeedbackModal) {
+        setShowFeedbackModal(true);
+      }
+    };
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, [post.mediaType, post.id, isAuthenticated, hasGivenFeedback, showFeedbackModal]);
 
   const toggleLike = async () => {
     if (!isAuthenticated) {
@@ -109,6 +138,26 @@ export const Post: React.FC<PostProps> = ({
       }
     } finally {
       setIsSharing(false);
+    }
+  };
+
+  const handleFeedbackSubmit = async (feedbackData: any) => {
+    try {
+      const response = await feedbackAPI.submitVideoFeedback(post.id, feedbackData);
+      
+      if (response.success) {
+        setHasGivenFeedback(true);
+        setShowFeedbackModal(false);
+        setRewards(response.rewards);
+        setShowRewardModal(true);
+      }
+    } catch (error: any) {
+      console.error("Error submitting feedback:", error);
+      // If already gave feedback, just close the modal
+      if (error.response?.status === 400) {
+        setHasGivenFeedback(true);
+        setShowFeedbackModal(false);
+      }
     }
   };
 
@@ -288,6 +337,25 @@ export const Post: React.FC<PostProps> = ({
         </div>
         <p className="text-gray-500 text-xs mt-2 uppercase">{post.timestamp}</p>
       </div>
+
+      {/* Video Feedback Modal */}
+      {showFeedbackModal && post.mediaType === 'video' && (
+        <VideoFeedbackModal
+          videoId={post.id}
+          videoTitle={post.caption.split('\n')[0].replace('📚 ', '')}
+          completionPercentage={videoProgress}
+          onClose={() => setShowFeedbackModal(false)}
+          onSubmit={handleFeedbackSubmit}
+        />
+      )}
+
+      {/* Reward Modal */}
+      {showRewardModal && rewards && (
+        <RewardModal
+          rewards={rewards}
+          onClose={() => setShowRewardModal(false)}
+        />
+      )}
     </article>
   );
 };
