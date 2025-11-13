@@ -117,20 +117,25 @@ const App: React.FC = () => {
     } finally {
       setIsLoadingPosts(false);
     }
-  }, []);
+  }, [user]);
 
   // Load posts on mount and when auth changes
   useEffect(() => {
-    if (isAuthenticated && !loading) {
-      // Only redirect parents if we're on the home page
-      if (user?.isParent) {
+    // If still loading auth, wait
+    if (loading) return;
+
+    // If authenticated
+    if (isAuthenticated && user) {
+      // Redirect parents to their dashboard
+      if (user.isParent) {
         navigate("/parent-dashboard", { replace: true });
         return;
       }
-      // Only fetch posts if not a parent (children only)
-      if (!user?.isParent) {
-        fetchPosts(1);
-      }
+      // Fetch posts for children
+      fetchPosts(1);
+    } else {
+      // Fetch posts for unauthenticated users (guests)
+      fetchPosts(1);
     }
   }, [isAuthenticated, loading, user, navigate, fetchPosts]);
 
