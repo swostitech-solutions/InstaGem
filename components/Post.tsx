@@ -82,8 +82,8 @@ export const Post: React.FC<PostProps> = ({
         actualWatchPercentageRef.current = (watchedSeconds / totalSeconds) * 100;
       }
 
-      // Show feedback modal when 90% ACTUALLY WATCHED (not just seeked)
-      if (actualWatchPercentageRef.current >= 90 && !hasGivenFeedback && !showFeedbackModal) {
+      // Show feedback modal when 90% ACTUALLY WATCHED (not just seeked) - but NOT for admins
+      if (actualWatchPercentageRef.current >= 90 && !hasGivenFeedback && !showFeedbackModal && !user?.isAdmin) {
         setShowFeedbackModal(true);
       }
     };

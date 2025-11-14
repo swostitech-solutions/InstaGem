@@ -7,6 +7,7 @@ import Post from '../models/Post.js';
 import WatchHistory from '../models/WatchHistory.js';
 import ParentGuardian from '../models/ParentGuardian.js';
 import Child from '../models/Child.js';
+import VideoFeedback from '../models/VideoFeedback.js';
 
 dotenv.config();
 
@@ -15,6 +16,10 @@ const clearDatabase = async () => {
     await connectDB();
 
     console.log('🗑️  Starting database cleanup...\n');
+
+    // Delete all video feedback
+    const feedbackDeleted = await VideoFeedback.deleteMany({});
+    console.log(`✅ Deleted ${feedbackDeleted.deletedCount} video feedback records`);
 
     // Delete all watch history
     const watchHistoryDeleted = await WatchHistory.deleteMany({});
