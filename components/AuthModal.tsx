@@ -7,25 +7,17 @@ const AuthModal: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Keep both mounted, show/hide with opacity and visibility for zero flicker */}
-      <div 
-        className={showLogin ? "opacity-100 visible" : "opacity-0 invisible absolute"} 
-        style={{ transition: 'none' }}
-      >
+      {showLogin ? (
         <LoginModal
-          onClose={() => {}} // Can't close - auth is required
+          onClose={() => {}}
           onSwitchToRegister={() => setShowLogin(false)}
         />
-      </div>
-      <div 
-        className={!showLogin ? "opacity-100 visible" : "opacity-0 invisible absolute"} 
-        style={{ transition: 'none' }}
-      >
+      ) : (
         <RegisterModal
-          onClose={() => {}} // Can't close - auth is required
+          onClose={() => {}}
           onSwitchToLogin={() => setShowLogin(true)}
         />
-      </div>
+      )}
     </div>
   );
 };
