@@ -79,9 +79,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 bg-opacity-95 flex items-center justify-center z-50 overflow-y-auto py-4 px-4">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 flex items-center justify-center z-50 p-4">
       <div
-        className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-6 max-w-lg w-full animate-scaleIn shadow-2xl border-2 border-purple-500 max-h-[95vh] overflow-y-auto"
+        className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 max-w-lg w-full shadow-2xl border-2 border-purple-500 max-h-[90vh] overflow-y-auto"
         style={{ scrollbarWidth: "thin", scrollbarColor: "#8B5CF6 #1F2937" }}
       >
         {/* Close button - repositioned */}

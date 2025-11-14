@@ -40,8 +40,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 bg-opacity-95 flex items-center justify-center z-50 overflow-y-auto py-8">
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 max-w-md w-full mx-4 animate-scaleIn shadow-2xl border-2 border-blue-500 max-h-[95vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 max-w-md w-full shadow-2xl border-2 border-blue-500 max-h-[90vh] overflow-y-auto">
         {/* Header with fun emoji */}
         <div className="text-center mb-6">
           <div className="text-6xl mb-3">📱</div>
@@ -148,21 +148,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </button>
         </div>
 
-        {/* Fun decorative elements */}
-        <div className="mt-6 flex justify-center gap-3 text-2xl opacity-50">
-          <span className="animate-bounce" style={{ animationDelay: "0s" }}>
-            ⭐
-          </span>
-          <span className="animate-bounce" style={{ animationDelay: "0.1s" }}>
-            💫
-          </span>
-          <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
-            ✨
-          </span>
-          <span className="animate-bounce" style={{ animationDelay: "0.3s" }}>
-            🌟
-          </span>
-        </div>
       </div>
     </div>
   );
