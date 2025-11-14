@@ -386,7 +386,12 @@ const App: React.FC = () => {
 
   // Show login modal if not authenticated
   if (!isAuthenticated) {
-    return <AuthModal />;
+    // Use a stable render to prevent mobile touch events from causing re-renders
+    return (
+      <div className="fixed inset-0 bg-black" style={{ touchAction: 'manipulation' }}>
+        <AuthModal />
+      </div>
+    );
   }
 
   return (
