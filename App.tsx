@@ -67,7 +67,7 @@ const App: React.FC = () => {
   const [explorePosts, setExplorePosts] = useState<PostType[]>([]);
   const [isLoadingExplore, setIsLoadingExplore] = useState(false);
   const [viewingProfile, setViewingProfile] = useState<User | null>(null);
-  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
 
@@ -135,29 +135,40 @@ const App: React.FC = () => {
   // Load posts on mount and when auth changes
   useEffect(() => {
     // If still loading auth, wait
-    if (loading) return;
+    if (loading) {
+      console.log('App: Waiting for auth to load...');
+      return;
+    }
 
     // Only run once when authentication is determined
     const hasRun = sessionStorage.getItem('postsLoaded');
+    console.log('App: Auth check -', { isAuthenticated, user: user?.username, hasRun });
     
     // If authenticated
     if (isAuthenticated && user) {
       // Redirect parents to their dashboard
       if (user.isParent) {
+        console.log('App: Redirecting parent to dashboard');
         navigate("/parent-dashboard", { replace: true });
         return;
       }
       // Fetch posts for children (only if not already loaded this session)
       if (!hasRun) {
+        console.log('App: Fetching posts for authenticated user');
         fetchPosts(1);
         sessionStorage.setItem('postsLoaded', 'true');
+      } else {
+        console.log('App: Posts already loaded this session');
       }
     } else if (!isAuthenticated && !hasRun) {
       // Fetch posts for unauthenticated users (guests)
+      console.log('App: Fetching posts for guest user');
       fetchPosts(1);
       sessionStorage.setItem('postsLoaded', 'true');
+    } else {
+      console.log('App: No posts fetch needed', { isAuthenticated, hasRun });
     }
-  }, [isAuthenticated, loading, user, navigate]); // Remove fetchPosts from dependencies
+  }, [isAuthenticated, loading, user, navigate, fetchPosts]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);

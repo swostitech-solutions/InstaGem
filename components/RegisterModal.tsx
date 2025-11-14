@@ -68,10 +68,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         parentEmail: formData.parentEmail || undefined,
         favoriteColor: formData.favoriteColor,
       });
-      // Clear session flags to allow feed to load
-      sessionStorage.removeItem('postsLoaded');
-      // Reload page to show feed
-      window.location.reload();
+      // Clear ALL session storage to reset state
+      sessionStorage.clear();
+      // Force a hard reload to reinitialize everything
+      window.location.href = window.location.origin;
     } catch (err: any) {
       setError(err.message || "Oops! Something went wrong. Try again! 🌟");
     } finally {
