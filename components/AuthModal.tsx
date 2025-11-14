@@ -1,9 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LoginModal } from "./LoginModal";
 import { RegisterModal } from "./RegisterModal";
 
 const AuthModal: React.FC = () => {
-  const [showLogin, setShowLogin] = useState(true);
+  // Use sessionStorage to persist modal state across re-renders
+  const getInitialModalState = () => {
+    const stored = sessionStorage.getItem('authModalState');
+    return stored === 'register' ? false : true; // true = login, false = register
+  };
+
+  const [showLogin, setShowLogin] = useState(getInitialModalState);
+
+  // Persist modal state to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem('authModalState', showLogin ? 'login' : 'register');
+  }, [showLogin]);
+
+  const handleSwitchToRegister = () => {
+    setShowLogin(false);
+    sessionStorage.setItem('authModalState', 'register');
+  };
+
+  const handleSwitchToLogin = () => {
+    setShowLogin(true);
+    sessionStorage.setItem('authModalState', 'login');
+  };
 
   return (
     <div 
@@ -20,13 +41,13 @@ const AuthModal: React.FC = () => {
         <LoginModal
           key="login"
           onClose={() => {}}
-          onSwitchToRegister={() => setShowLogin(false)}
+          onSwitchToRegister={handleSwitchToRegister}
         />
       ) : (
         <RegisterModal
           key="register"
           onClose={() => {}}
-          onSwitchToLogin={() => setShowLogin(true)}
+          onSwitchToLogin={handleSwitchToLogin}
         />
       )}
     </div>

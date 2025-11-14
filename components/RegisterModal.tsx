@@ -165,6 +165,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+              autoComplete="off"
               className="w-full px-3 py-2 bg-gray-800 border-2 border-purple-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition"
               placeholder="What's your name? ✨"
               required
@@ -215,6 +216,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
               name="parentEmail"
               value={formData.parentEmail}
               onChange={handleChange}
+              autoComplete="off"
               className="w-full px-3 py-2 bg-gray-800 border-2 border-green-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
               placeholder="parent@example.com"
               required={parseInt(formData.age) < 13}
@@ -249,6 +251,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
               name="username"
               value={formData.username}
               onChange={handleChange}
+              autoComplete="off"
               className="w-full px-3 py-2 bg-gray-800 border-2 border-yellow-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition"
               placeholder="coolkid123"
               required
@@ -270,8 +273,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
               name="email"
               value={formData.email}
               onChange={handleChange}
+              autoComplete="off"
               className="w-full px-3 py-2 bg-gray-800 border-2 border-pink-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition"
-              placeholder="your.email@example.com"
+              placeholder="your@email.com"
               required
             />
           </div>
@@ -290,6 +294,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
               name="password"
               value={formData.password}
               onChange={handleChange}
+              autoComplete="new-password"
               className="w-full px-3 py-2 bg-gray-800 border-2 border-purple-500 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition"
               placeholder="Shh... it's a secret! 🤫"
               required
