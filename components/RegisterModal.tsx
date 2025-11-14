@@ -50,6 +50,12 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
       return;
     }
 
+    // Validate parent and kid emails are different
+    if (formData.parentEmail && formData.parentEmail.toLowerCase() === formData.email.toLowerCase()) {
+      setError("Your email and parent's email must be different! 🔄");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -62,7 +68,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         parentEmail: formData.parentEmail || undefined,
         favoriteColor: formData.favoriteColor,
       });
-      onClose();
+      // Clear session flags to allow feed to load
+      sessionStorage.removeItem('postsLoaded');
+      // Reload page to show feed
+      window.location.reload();
     } catch (err: any) {
       setError(err.message || "Oops! Something went wrong. Try again! 🌟");
     } finally {

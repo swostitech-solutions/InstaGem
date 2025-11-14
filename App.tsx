@@ -69,6 +69,7 @@ const App: React.FC = () => {
   const [viewingProfile, setViewingProfile] = useState<User | null>(null);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [hasReachedEnd, setHasReachedEnd] = useState(false);
 
   // Clear session flag on component unmount (page refresh)
   useEffect(() => {
@@ -240,6 +241,8 @@ const App: React.FC = () => {
       setCurrentPage(nextPage);
     } catch (error) {
       console.error("Error loading more posts:", error);
+      // Mark as reached end if error loading more
+      setHasReachedEnd(true);
     } finally {
       setIsLoadingMore(false);
     }
@@ -290,6 +293,10 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (viewingProfile) return; // Don't load content when viewing a profile
+
+      // Prevent flickering at top of page
+      const scrollTop = document.documentElement.scrollTop || window.pageYOffset;
+      if (scrollTop < 0) return;
 
       if (
         window.innerHeight + document.documentElement.scrollTop <
@@ -345,6 +352,20 @@ const App: React.FC = () => {
                   onProfileClick={handleProfileClick}
                 />
                 {isLoadingMore && <LoadingSpinner />}
+                {!isLoadingMore && hasReachedEnd && posts.length > 0 && (
+                  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                    <div className="text-6xl mb-4 animate-bounce">🎉</div>
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                      You've reached the end!
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Wow! You watched all the awesome videos! 🌟
+                    </p>
+                    <p className="text-gray-500 text-xs">
+                      Come back later for more educational fun! 📚🎥
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </>
@@ -356,6 +377,17 @@ const App: React.FC = () => {
           <>
             <SearchView posts={explorePosts} />
             {isLoadingExplore && <LoadingSpinner />}
+            {!isLoadingExplore && explorePosts.length > 0 && (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <div className="text-6xl mb-4">🔍✨</div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                  That's all for now!
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  Try searching for something else! 🚀
+                </p>
+              </div>
+            )}
           </>
         );
       case "shop":
