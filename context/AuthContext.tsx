@@ -4,6 +4,8 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  useMemo,
+  useCallback,
 } from "react";
 import * as authAPI from "../api/authAPI";
 
@@ -91,7 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Initial auth is already loaded synchronously above
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     try {
       const response = await authAPI.login({ email, password });
       const { token: newToken, ...userData } = response.data;
@@ -115,9 +117,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error("Error message:", error.message);
       throw new Error(error.response?.data?.message || "Login failed");
     }
-  };
+  }, []);
 
-  const register = async (data: RegisterData) => {
+  const register = useCallback(async (data: RegisterData) => {
     try {
       const response = await authAPI.register(data);
       const { token: newToken, ...userData } = response.data;
@@ -131,9 +133,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error("Register error:", error);
       throw new Error(error.response?.data?.message || "Registration failed");
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     authAPI.logout().catch(console.error);
 
     setUser(null);
@@ -141,9 +143,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     sessionStorage.removeItem("postsLoaded"); // Clear posts loaded flag
-  };
+  }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     token,
     loading,
@@ -151,7 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     isAuthenticated: !!user && !!token,
-  };
+  }), [user, token, loading, login, register, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
