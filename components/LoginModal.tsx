@@ -40,7 +40,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center z-50 p-4">
+    <div 
+      className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center z-50 p-4"
+      style={{ touchAction: 'manipulation' }}
+    >
       <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 max-w-md w-full shadow-2xl border-2 border-blue-500 max-h-[90vh] overflow-y-auto">
         {/* Header with fun emoji */}
         <div className="text-center mb-6">
