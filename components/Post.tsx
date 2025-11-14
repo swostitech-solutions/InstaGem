@@ -477,7 +477,12 @@ export const Post: React.FC<PostProps> = ({
 
       {/* Post Info */}
       <div className="px-3 pb-4 text-sm">
-        <p className="font-semibold">{likesCount} likes</p>
+        <div className="flex items-center gap-3 mb-1">
+          <p className="font-semibold">{likesCount} likes</p>
+          {post.mediaType === 'video' && post.views !== undefined && (
+            <p className="text-gray-400">• {post.views.toLocaleString()} views</p>
+          )}
+        </div>
         <p className="mt-1 whitespace-pre-wrap">
           <button
             onClick={() => onProfileClick(post.user)}

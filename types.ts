@@ -21,6 +21,7 @@ export interface Post {
   mediaType: "image" | "video";
   caption: string;
   likes: number;
+  views?: number;  // View count for videos
   isLikedByUser?: boolean;  // Whether current user has liked this
   comments: { user: string; text: string }[];
   timestamp: string;

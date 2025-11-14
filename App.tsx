@@ -106,6 +106,7 @@ const App: React.FC = () => {
         mediaType: "video" as const,
         caption: `📚 ${video.title}\n\n${video.description}\n\n🎯 Ages ${video.ageGroup} | ${video.category}`,
         likes: video.likes?.length || 0,
+        views: video.views || 0,
         isLikedByUser: currentUser?.likedVideos?.includes(video._id) || false,
         comments:
           video.comments?.map((c: any) => ({
