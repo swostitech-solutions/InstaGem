@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Feed } from "./components/Feed";
@@ -417,13 +417,15 @@ const App: React.FC = () => {
   }
 
   // Show login modal if not authenticated
+  // Memoize AuthModal to prevent re-mounting on parent re-renders
+  const authModalElement = useMemo(() => (
+    <div className="fixed inset-0 bg-black" style={{ touchAction: 'manipulation' }}>
+      <AuthModal />
+    </div>
+  ), []);
+
   if (!isAuthenticated) {
-    // Use a stable render to prevent mobile touch events from causing re-renders
-    return (
-      <div className="fixed inset-0 bg-black" style={{ touchAction: 'manipulation' }}>
-        <AuthModal />
-      </div>
-    );
+    return authModalElement;
   }
 
   return (

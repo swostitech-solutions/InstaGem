@@ -1,8 +1,8 @@
-import React, { useState, memo } from "react";
+import React, { useState } from "react";
 import { LoginModal } from "./LoginModal";
 import { RegisterModal } from "./RegisterModal";
 
-const AuthModal: React.FC = memo(() => {
+const AuthModal: React.FC = () => {
   const [showLogin, setShowLogin] = useState(true);
 
   return (
@@ -31,8 +31,6 @@ const AuthModal: React.FC = memo(() => {
       )}
     </div>
   );
-});
-
-AuthModal.displayName = 'AuthModal';
+};
 
 export default AuthModal;
