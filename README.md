@@ -12,22 +12,6 @@
 
 </div>
 
----
-
-## 🌟 About InstaGem
-
-InstaGem transforms screen time into learning time. Unlike traditional social media, InstaGem is a **curated educational platform** designed specifically for children aged 1-17, featuring handpicked educational content from the world's most trusted sources.
-
-### ✨ Key Features
-
-- 🎓 **Curated Educational Content** - Handpicked videos from Khan Academy, NASA, National Geographic Kids, PBS Kids, and more
-- 🛡️ **Safe Environment** - No user uploads, only pre-approved educational content
-- 👶 **Age-Appropriate** - Content tailored for ages 1-17 with parental controls
-- 🔒 **COPPA Compliant** - Full parental consent system for children under 13
-- 💬 **Moderated Comments** - Safe commenting with clear community guidelines
-- 📊 **Parent Dashboard** - Track learning progress and activity (coming soon)
-
----
 
 ## 🚀 Live Demo
 
