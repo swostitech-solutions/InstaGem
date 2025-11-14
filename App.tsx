@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Feed } from "./components/Feed";
@@ -17,7 +17,7 @@ import * as postsAPI from "./api/postsAPI";
 import * as videosAPI from "./api/videosAPI";
 import { useAuth } from "./context/AuthContext";
 import WelcomeMessage from "./src/components/WelcomeMessage";
-import AuthModal from "./components/AuthModal";
+import AuthModalWrapper from "./components/AuthModalWrapper";
 import AdminDashboard from "./components/AdminDashboard";
 
 export type ActiveTab = "home" | "search" | "reels" | "shop" | "profile";
@@ -417,15 +417,8 @@ const App: React.FC = () => {
   }
 
   // Show login modal if not authenticated
-  // Memoize AuthModal to prevent re-mounting on parent re-renders
-  const authModalElement = useMemo(() => (
-    <div className="fixed inset-0 bg-black" style={{ touchAction: 'manipulation' }}>
-      <AuthModal />
-    </div>
-  ), []);
-
   if (!isAuthenticated) {
-    return authModalElement;
+    return <AuthModalWrapper />;
   }
 
   return (
