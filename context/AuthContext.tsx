@@ -142,7 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    sessionStorage.removeItem("postsLoaded"); // Clear posts loaded flag
+    sessionStorage.clear(); // Clear all session data
   }, []);
 
   const value = useMemo(() => ({

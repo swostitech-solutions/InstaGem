@@ -68,10 +68,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         parentEmail: formData.parentEmail || undefined,
         favoriteColor: formData.favoriteColor,
       });
-      // Clear ALL session storage to reset state
-      sessionStorage.clear();
-      // Force a hard reload to reinitialize everything
-      window.location.href = window.location.origin;
+      // Success! Don't redirect, just close modal
+      // The App will detect auth change and load feed automatically
+      onClose();
     } catch (err: any) {
       setError(err.message || "Oops! Something went wrong. Try again! 🌟");
     } finally {

@@ -71,13 +71,6 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
 
-  // Clear session flag on component unmount (page refresh)
-  useEffect(() => {
-    return () => {
-      sessionStorage.removeItem('postsLoaded');
-    };
-  }, []);
-
   // Fetch posts from API (admin uploaded videos)
   const fetchPosts = useCallback(async (page: number = 1) => {
     try {
@@ -135,40 +128,26 @@ const App: React.FC = () => {
   // Load posts on mount and when auth changes
   useEffect(() => {
     // If still loading auth, wait
-    if (loading) {
-      console.log('App: Waiting for auth to load...');
-      return;
-    }
-
-    // Only run once when authentication is determined
-    const hasRun = sessionStorage.getItem('postsLoaded');
-    console.log('App: Auth check -', { isAuthenticated, user: user?.username, hasRun });
+    if (loading) return;
     
     // If authenticated
     if (isAuthenticated && user) {
       // Redirect parents to their dashboard
       if (user.isParent) {
-        console.log('App: Redirecting parent to dashboard');
         navigate("/parent-dashboard", { replace: true });
         return;
       }
-      // Fetch posts for children (only if not already loaded this session)
-      if (!hasRun) {
-        console.log('App: Fetching posts for authenticated user');
+      // Fetch posts for children only if we don't have posts yet
+      if (posts.length === 0) {
         fetchPosts(1);
-        sessionStorage.setItem('postsLoaded', 'true');
-      } else {
-        console.log('App: Posts already loaded this session');
       }
-    } else if (!isAuthenticated && !hasRun) {
-      // Fetch posts for unauthenticated users (guests)
-      console.log('App: Fetching posts for guest user');
-      fetchPosts(1);
-      sessionStorage.setItem('postsLoaded', 'true');
-    } else {
-      console.log('App: No posts fetch needed', { isAuthenticated, hasRun });
+    } else if (!isAuthenticated) {
+      // Fetch posts for unauthenticated users only if we don't have posts
+      if (posts.length === 0) {
+        fetchPosts(1);
+      }
     }
-  }, [isAuthenticated, loading, user, navigate, fetchPosts]);
+  }, [isAuthenticated, loading, user, navigate, fetchPosts, posts.length]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
@@ -242,22 +221,31 @@ const App: React.FC = () => {
   };
 
   const loadMorePosts = useCallback(async () => {
-    if (isLoadingMore) return;
+    if (isLoadingMore || hasReachedEnd) return; // Don't load if already at end
 
     setIsLoadingMore(true);
 
     try {
       const nextPage = currentPage + 1;
+      const initialPostCount = posts.length;
       await fetchPosts(nextPage);
+      
+      // Check if new posts were added
+      // If no new posts were loaded, we've reached the end
+      setTimeout(() => {
+        if (posts.length === initialPostCount) {
+          setHasReachedEnd(true);
+        }
+      }, 500);
+      
       setCurrentPage(nextPage);
     } catch (error) {
       console.error("Error loading more posts:", error);
-      // Mark as reached end if error loading more
       setHasReachedEnd(true);
     } finally {
       setIsLoadingMore(false);
     }
-  }, [isLoadingMore, currentPage, fetchPosts]);
+  }, [isLoadingMore, currentPage, fetchPosts, hasReachedEnd, posts.length]);
 
   const loadMoreExplorePosts = useCallback(async () => {
     if (isLoadingExplore) return;
@@ -302,29 +290,41 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+    
     const handleScroll = () => {
-      if (viewingProfile) return; // Don't load content when viewing a profile
+      // Clear previous timeout
+      clearTimeout(scrollTimeout);
+      
+      // Debounce scroll events
+      scrollTimeout = setTimeout(() => {
+        if (viewingProfile) return;
 
-      // Prevent flickering at top of page
-      const scrollTop = document.documentElement.scrollTop || window.pageYOffset;
-      if (scrollTop < 0) return;
-
-      if (
-        window.innerHeight + document.documentElement.scrollTop <
-        document.documentElement.offsetHeight - 200
-      ) {
-        return;
-      }
-
-      if (activeTab === "home" && !isLoadingMore) {
-        loadMorePosts();
-      } else if (activeTab === "search" && !isLoadingExplore) {
-        loadMoreExplorePosts();
-      }
+        const scrollTop = document.documentElement.scrollTop || window.pageYOffset;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = window.innerHeight;
+        
+        // Prevent negative scroll (iOS bounce)
+        if (scrollTop < 0) return;
+        
+        // Check if user scrolled to bottom (with 300px threshold)
+        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 300;
+        
+        if (isNearBottom && !hasReachedEnd) {
+          if (activeTab === "home" && !isLoadingMore) {
+            loadMorePosts();
+          } else if (activeTab === "search" && !isLoadingExplore) {
+            loadMoreExplorePosts();
+          }
+        }
+      }, 100); // Debounce by 100ms
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(scrollTimeout);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [
     activeTab,
     isLoadingMore,
@@ -332,6 +332,7 @@ const App: React.FC = () => {
     isLoadingExplore,
     loadMoreExplorePosts,
     viewingProfile,
+    hasReachedEnd,
   ]);
 
   const renderContent = () => {
