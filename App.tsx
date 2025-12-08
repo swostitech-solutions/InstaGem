@@ -17,7 +17,7 @@ import * as postsAPI from "./api/postsAPI";
 import * as videosAPI from "./api/videosAPI";
 import { useAuth } from "./context/AuthContext";
 import WelcomeMessage from "./src/components/WelcomeMessage";
-import AuthModalWrapper from "./components/AuthModalWrapper";
+import AuthModal from "./components/AuthModal";
 import AdminDashboard from "./components/AdminDashboard";
 
 export type ActiveTab = "home" | "search" | "reels" | "shop" | "profile";
@@ -131,20 +131,25 @@ const App: React.FC = () => {
     // If still loading auth, wait
     if (loading) return;
     
-    // If already fetched, skip
-    if (hasFetchedRef.current) return;
+    // Reset fetch flag when auth changes
+    hasFetchedRef.current = false;
     
     // If authenticated
-    if (isAuthenticated && user) {
+    if (isAuthenticated) {
+      const storedUser = localStorage.getItem("user");
+      const currentUser = storedUser ? JSON.parse(storedUser) : null;
+      
       // Redirect parents to their dashboard
-      if (user.isParent) {
+      if (currentUser?.isParent) {
         navigate("/parent-dashboard", { replace: true });
         return;
       }
       // Fetch posts for children
-      fetchPosts(1);
-      hasFetchedRef.current = true;
-    } else if (!isAuthenticated) {
+      if (!hasFetchedRef.current) {
+        fetchPosts(1);
+        hasFetchedRef.current = true;
+      }
+    } else if (!isAuthenticated && !hasFetchedRef.current) {
       // Fetch posts for unauthenticated users
       fetchPosts(1);
       hasFetchedRef.current = true;
@@ -434,7 +439,11 @@ const App: React.FC = () => {
 
   // Show login modal if not authenticated
   if (!isAuthenticated) {
-    return <AuthModalWrapper />;
+    return (
+      <div className="fixed inset-0 bg-black">
+        <AuthModal />
+      </div>
+    );
   }
 
   return (
