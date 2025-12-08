@@ -226,24 +226,23 @@ const App: React.FC = () => {
   };
 
   const loadMorePosts = useCallback(async () => {
-    if (isLoadingMore || hasReachedEnd) return; // Don't load if already at end
+    if (isLoadingMore || hasReachedEnd) return;
 
     setIsLoadingMore(true);
+    const initialPostCount = posts.length;
 
     try {
       const nextPage = currentPage + 1;
-      const initialPostCount = posts.length;
       await fetchPosts(nextPage);
+      setCurrentPage(nextPage);
       
-      // Check if new posts were added
-      // If no new posts were loaded, we've reached the end
-      setTimeout(() => {
-        if (posts.length === initialPostCount) {
+      // Check immediately if new posts were added
+      // Use a small delay to let state update
+      requestAnimationFrame(() => {
+        if (posts.length === initialPostCount || posts.length === 0) {
           setHasReachedEnd(true);
         }
-      }, 500);
-      
-      setCurrentPage(nextPage);
+      });
     } catch (error) {
       console.error("Error loading more posts:", error);
       setHasReachedEnd(true);
@@ -296,6 +295,9 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    // Don't attach scroll listener if already reached end
+    if (hasReachedEnd) return;
+    
     let scrollTimeout: NodeJS.Timeout;
     
     const handleScroll = () => {
@@ -304,7 +306,7 @@ const App: React.FC = () => {
       
       // Debounce scroll events
       scrollTimeout = setTimeout(() => {
-        if (viewingProfile) return;
+        if (viewingProfile || hasReachedEnd) return;
 
         const scrollTop = document.documentElement.scrollTop || window.pageYOffset;
         const scrollHeight = document.documentElement.scrollHeight;
@@ -316,14 +318,14 @@ const App: React.FC = () => {
         // Check if user scrolled to bottom (with 300px threshold)
         const isNearBottom = scrollTop + clientHeight >= scrollHeight - 300;
         
-        if (isNearBottom && !hasReachedEnd) {
+        if (isNearBottom) {
           if (activeTab === "home" && !isLoadingMore) {
             loadMorePosts();
           } else if (activeTab === "search" && !isLoadingExplore) {
             loadMoreExplorePosts();
           }
         }
-      }, 100); // Debounce by 100ms
+      }, 150); // Increased debounce to 150ms for smoother experience
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
