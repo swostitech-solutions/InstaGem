@@ -71,6 +71,7 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
   const hasFetchedRef = useRef(false);
+  const prevAuthRef = useRef(isAuthenticated);
 
   // Fetch posts from API (admin uploaded videos)
   const fetchPosts = useCallback(async (page: number = 1) => {
@@ -131,26 +132,30 @@ const App: React.FC = () => {
     // If still loading auth, wait
     if (loading) return;
     
-    // If already fetched, skip
-    if (hasFetchedRef.current) return;
+    // Only fetch if auth state actually changed or first load
+    const authChanged = prevAuthRef.current !== isAuthenticated;
     
-    // If authenticated
-    if (isAuthenticated) {
-      const storedUser = localStorage.getItem("user");
-      const currentUser = storedUser ? JSON.parse(storedUser) : null;
+    if (!hasFetchedRef.current || authChanged) {
+      prevAuthRef.current = isAuthenticated;
       
-      // Redirect parents to their dashboard
-      if (currentUser?.isParent) {
-        navigate("/parent-dashboard", { replace: true });
-        return;
+      // If authenticated
+      if (isAuthenticated) {
+        const storedUser = localStorage.getItem("user");
+        const currentUser = storedUser ? JSON.parse(storedUser) : null;
+        
+        // Redirect parents to their dashboard
+        if (currentUser?.isParent) {
+          navigate("/parent-dashboard", { replace: true });
+          return;
+        }
+        // Fetch posts for children
+        fetchPosts(1);
+        hasFetchedRef.current = true;
+      } else if (!isAuthenticated) {
+        // Fetch posts for unauthenticated users
+        fetchPosts(1);
+        hasFetchedRef.current = true;
       }
-      // Fetch posts for children
-      fetchPosts(1);
-      hasFetchedRef.current = true;
-    } else if (!isAuthenticated) {
-      // Fetch posts for unauthenticated users
-      fetchPosts(1);
-      hasFetchedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, loading]);
