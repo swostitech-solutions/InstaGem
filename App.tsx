@@ -57,7 +57,7 @@ const generateExplorePosts = (
 };
 
 const App: React.FC = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [viewingStory, setViewingStory] = useState<Story | null>(null);
@@ -129,9 +129,6 @@ const App: React.FC = () => {
 
   // Load posts on mount and when auth changes
   useEffect(() => {
-    // If still loading auth, wait
-    if (loading) return;
-    
     // Only fetch if auth state actually changed or first load
     const authChanged = prevAuthRef.current !== isAuthenticated;
     
@@ -158,7 +155,7 @@ const App: React.FC = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, loading]);
+  }, [isAuthenticated]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
@@ -426,21 +423,7 @@ const App: React.FC = () => {
     }
   };
 
-  // Show loading state - Only show if actually loading
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-white font-medium">
-            Loading...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show login modal if not authenticated
+  // Show login modal if not authenticated (no loading state needed - auth loads synchronously)
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 bg-black">

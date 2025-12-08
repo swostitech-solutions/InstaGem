@@ -11,11 +11,6 @@ const AuthModal: React.FC = () => {
 
   const [showLogin, setShowLogin] = useState(getInitialModalState);
 
-  // Persist modal state to sessionStorage
-  useEffect(() => {
-    sessionStorage.setItem("authModalState", showLogin ? "login" : "register");
-  }, [showLogin]);
-
   const handleSwitchToRegister = () => {
     setShowLogin(false);
     sessionStorage.setItem("authModalState", "register");

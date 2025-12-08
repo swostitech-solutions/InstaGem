@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const getInitialAuth = () => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-    
+
     if (storedToken && storedUser) {
       try {
         return {
@@ -83,15 +83,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const initialAuth = getInitialAuth();
-  
+
   const [user, setUser] = useState<User | null>(initialAuth.user);
   const [token, setToken] = useState<string | null>(initialAuth.token);
-  const [loading, setLoading] = useState(false); // No loading needed - we init synchronously
-
-  useEffect(() => {
-    // This effect is now just for cleanup/validation if needed
-    // Initial auth is already loaded synchronously above
-  }, []);
+  const [loading] = useState(false); // Always false - we init synchronously from localStorage
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -145,15 +140,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     sessionStorage.clear(); // Clear all session data
   }, []);
 
-  const value = useMemo(() => ({
-    user,
-    token,
-    loading,
-    login,
-    register,
-    logout,
-    isAuthenticated: !!user && !!token,
-  }), [user, token, loading, login, register, logout]);
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      loading,
+      login,
+      register,
+      logout,
+      isAuthenticated: !!user && !!token,
+    }),
+    [user, token, loading, login, register, logout]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
