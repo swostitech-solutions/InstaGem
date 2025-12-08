@@ -147,7 +147,8 @@ const App: React.FC = () => {
         fetchPosts(1);
       }
     }
-  }, [isAuthenticated, loading, user, navigate, fetchPosts, posts.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, loading, user, navigate]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
@@ -260,7 +261,8 @@ const App: React.FC = () => {
     if (explorePosts.length === 0) {
       setExplorePosts(generateExplorePosts(0, 21));
     }
-  }, [explorePosts.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleProfileClick = (user: User) => {
     window.scrollTo(0, 0);
