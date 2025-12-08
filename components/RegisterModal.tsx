@@ -35,6 +35,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setError("");
 
     // Validate age
@@ -68,9 +69,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         parentEmail: formData.parentEmail || undefined,
         favoriteColor: formData.favoriteColor,
       });
-      // Success! Don't redirect, just close modal
-      // The App will detect auth change and load feed automatically
-      onClose();
+      // Success - modal will stay open until auth state updates
+      // Don't call onClose, let the app handle the transition
     } catch (err: any) {
       setError(err.message || "Oops! Something went wrong. Try again! 🌟");
     } finally {
@@ -95,6 +95,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
       <div
         className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 max-w-lg w-full shadow-2xl border-2 border-purple-500 max-h-[90vh] overflow-y-auto"
         style={{ scrollbarWidth: "thin", scrollbarColor: "#8B5CF6 #1F2937" }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Close button - repositioned */}
         <button
@@ -364,6 +365,9 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
           <button
             type="submit"
             disabled={loading}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 active:from-purple-600 active:via-pink-600 active:to-blue-600 text-white font-bold py-2.5 px-6 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mt-3 flex items-center justify-center gap-2"
             style={{ touchAction: 'manipulation' }}
           >
