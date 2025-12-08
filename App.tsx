@@ -131,8 +131,8 @@ const App: React.FC = () => {
     // If still loading auth, wait
     if (loading) return;
     
-    // Reset fetch flag when auth changes
-    hasFetchedRef.current = false;
+    // If already fetched, skip
+    if (hasFetchedRef.current) return;
     
     // If authenticated
     if (isAuthenticated) {
@@ -145,11 +145,9 @@ const App: React.FC = () => {
         return;
       }
       // Fetch posts for children
-      if (!hasFetchedRef.current) {
-        fetchPosts(1);
-        hasFetchedRef.current = true;
-      }
-    } else if (!isAuthenticated && !hasFetchedRef.current) {
+      fetchPosts(1);
+      hasFetchedRef.current = true;
+    } else if (!isAuthenticated) {
       // Fetch posts for unauthenticated users
       fetchPosts(1);
       hasFetchedRef.current = true;
