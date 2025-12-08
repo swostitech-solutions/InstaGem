@@ -5,36 +5,36 @@ import { RegisterModal } from "./RegisterModal";
 const AuthModal: React.FC = () => {
   // Use sessionStorage to persist modal state across re-renders
   const getInitialModalState = () => {
-    const stored = sessionStorage.getItem('authModalState');
-    return stored === 'register' ? false : true; // true = login, false = register
+    const stored = sessionStorage.getItem("authModalState");
+    return stored === "register" ? false : true; // true = login, false = register
   };
 
   const [showLogin, setShowLogin] = useState(getInitialModalState);
 
   // Persist modal state to sessionStorage
   useEffect(() => {
-    sessionStorage.setItem('authModalState', showLogin ? 'login' : 'register');
+    sessionStorage.setItem("authModalState", showLogin ? "login" : "register");
   }, [showLogin]);
 
   const handleSwitchToRegister = () => {
     setShowLogin(false);
-    sessionStorage.setItem('authModalState', 'register');
+    sessionStorage.setItem("authModalState", "register");
   };
 
   const handleSwitchToLogin = () => {
     setShowLogin(true);
-    sessionStorage.setItem('authModalState', 'login');
+    sessionStorage.setItem("authModalState", "login");
   };
 
   return (
-    <div 
-      className="min-h-screen bg-black overflow-hidden" 
-      style={{ 
-        position: 'fixed',
-        width: '100%',
-        height: '100%',
-        touchAction: 'manipulation',
-        WebkitOverflowScrolling: 'touch'
+    <div
+      className="min-h-screen bg-black overflow-hidden"
+      style={{
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        touchAction: "manipulation",
+        WebkitOverflowScrolling: "touch",
       }}
     >
       {showLogin ? (

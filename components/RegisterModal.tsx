@@ -316,11 +316,12 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
                   }
                   className={`${
                     color.bg
-                  } py-2 px-3 rounded-lg font-bold text-white text-xs transition transform hover:scale-105 ${
+                  } py-2 px-3 rounded-lg font-bold text-white text-xs ${
                     formData.favoriteColor === color.value
                       ? "ring-2 ring-white shadow-xl scale-105"
-                      : "opacity-70 hover:opacity-100"
+                      : "opacity-70 active:opacity-100"
                   }`}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   {color.name}
                 </button>
@@ -363,7 +364,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 hover:from-purple-600 hover:via-pink-600 hover:to-blue-600 text-white font-bold py-2.5 px-6 rounded-xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg mt-3 flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 active:from-purple-600 active:via-pink-600 active:to-blue-600 text-white font-bold py-2.5 px-6 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mt-3 flex items-center justify-center gap-2"
+            style={{ touchAction: 'manipulation' }}
           >
             {loading ? (
               <>
@@ -391,7 +393,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
           <p className="text-gray-400 text-xs">Already have an account? 🌈</p>
           <button
             onClick={onSwitchToLogin}
-            className="mt-1 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold text-sm hover:from-blue-300 hover:to-purple-300 transition"
+            className="mt-1 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold text-sm active:from-blue-300 active:to-purple-300"
+            style={{ touchAction: 'manipulation' }}
           >
             Log In Here! ✨
           </button>
