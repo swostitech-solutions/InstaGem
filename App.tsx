@@ -135,7 +135,7 @@ const App: React.FC = () => {
     if (!hasFetchedRef.current || authChanged) {
       prevAuthRef.current = isAuthenticated;
       
-      // If authenticated
+      // Only fetch posts if authenticated
       if (isAuthenticated) {
         const storedUser = localStorage.getItem("user");
         const currentUser = storedUser ? JSON.parse(storedUser) : null;
@@ -148,11 +148,8 @@ const App: React.FC = () => {
         // Fetch posts for children
         fetchPosts(1);
         hasFetchedRef.current = true;
-      } else if (!isAuthenticated) {
-        // Fetch posts for unauthenticated users
-        fetchPosts(1);
-        hasFetchedRef.current = true;
       }
+      // Don't fetch posts for unauthenticated users - they'll see the auth modal
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);

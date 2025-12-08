@@ -20,11 +20,19 @@ API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and reload page
+      // Unauthorized - check if we had a token before
+      const hadToken = !!localStorage.getItem("token");
+      
+      // Clear auth data
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // Reload to show login screen
-      window.location.reload();
+      sessionStorage.clear();
+      
+      // Only reload if user was previously authenticated
+      // This prevents reload loops on the login page
+      if (hadToken) {
+        window.location.href = "/";
+      }
     }
     return Promise.reject(error);
   }
