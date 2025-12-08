@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Feed } from "./components/Feed";
@@ -70,6 +70,7 @@ const App: React.FC = () => {
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
+  const hasFetchedRef = useRef(false);
 
   // Fetch posts from API (admin uploaded videos)
   const fetchPosts = useCallback(async (page: number = 1) => {
@@ -130,6 +131,9 @@ const App: React.FC = () => {
     // If still loading auth, wait
     if (loading) return;
     
+    // If already fetched, skip
+    if (hasFetchedRef.current) return;
+    
     // If authenticated
     if (isAuthenticated && user) {
       // Redirect parents to their dashboard
@@ -137,18 +141,16 @@ const App: React.FC = () => {
         navigate("/parent-dashboard", { replace: true });
         return;
       }
-      // Fetch posts for children only if we don't have posts yet
-      if (posts.length === 0) {
-        fetchPosts(1);
-      }
+      // Fetch posts for children
+      fetchPosts(1);
+      hasFetchedRef.current = true;
     } else if (!isAuthenticated) {
-      // Fetch posts for unauthenticated users only if we don't have posts
-      if (posts.length === 0) {
-        fetchPosts(1);
-      }
+      // Fetch posts for unauthenticated users
+      fetchPosts(1);
+      hasFetchedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, loading, user, navigate]);
+  }, [isAuthenticated, loading]);
 
   const handleStoryClick = (story: Story) => {
     setViewingStory(story);
