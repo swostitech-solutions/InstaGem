@@ -41,17 +41,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 flex items-center justify-center z-50 p-3 sm:p-4 md:p-6"
       style={{ touchAction: 'manipulation' }}
     >
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 max-w-md w-full shadow-2xl border-2 border-blue-500 max-h-[90vh] overflow-y-auto">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 max-w-md w-full shadow-2xl border-2 border-blue-500 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         {/* Header with fun emoji */}
-        <div className="text-center mb-6">
-          <div className="text-6xl mb-3">📱</div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-3">📱</div>
+          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Welcome Back!
           </h2>
-          <p className="text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text font-semibold text-sm mt-2">
+          <p className="text-transparent bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text font-semibold text-xs sm:text-sm mt-1 sm:mt-2">
             Continue Your Learning Journey! 🌈
           </p>
           <p className="text-gray-400 text-xs mt-1">
@@ -59,7 +59,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </p>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl transition"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-white text-2xl sm:text-3xl transition"
           >
             ×
           </button>
@@ -72,12 +72,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
           {/* Email Input */}
           <div className="relative">
             <label
               htmlFor="email"
-              className="block text-sm font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-2"
+              className="block text-xs sm:text-sm font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-1 sm:mb-2"
             >
               📧 Your Email
             </label>
@@ -86,7 +86,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-800 border-2 border-blue-500 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400 transition"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800 border-2 border-blue-500 rounded-lg sm:rounded-xl text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400 transition"
               placeholder="your.email@example.com"
               required
             />
@@ -96,7 +96,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <div className="relative">
             <label
               htmlFor="password"
-              className="block text-sm font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-2"
+              className="block text-xs sm:text-sm font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-1 sm:mb-2"
             >
               🔐 Password
             </label>
@@ -105,7 +105,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-800 border-2 border-purple-500 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400 transition"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800 border-2 border-purple-500 rounded-lg sm:rounded-xl text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400 transition"
               placeholder="Your secret password"
               required
             />
@@ -115,7 +115,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 active:from-blue-700 active:via-purple-700 active:to-pink-700 text-white font-bold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             {loading ? (
               <>
@@ -131,8 +131,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </button>
 
           {/* Educational reminder */}
-          <div className="mt-3 text-center">
-            <p className="text-xs text-gray-400 italic flex items-center justify-center gap-1">
+          <div className="mt-2 sm:mt-3 text-center">
+            <p className="text-xs text-gray-400 italic flex items-center justify-center gap-1 flex-wrap">
               <span>📚</span>
               <span>New educational reels waiting for you!</span>
               <span>🎬</span>
@@ -141,11 +141,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         </form>
 
         {/* Switch to Register */}
-        <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">New to InstaGem? 🌈</p>
+        <div className="mt-4 sm:mt-6 text-center">
+          <p className="text-gray-400 text-xs sm:text-sm">New to InstaGem? 🌈</p>
           <button
             onClick={onSwitchToRegister}
-            className="mt-2 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold hover:from-blue-300 hover:to-purple-300 transition"
+            className="mt-1 sm:mt-2 text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold text-sm sm:text-base hover:from-blue-300 hover:to-purple-300 transition"
           >
             Create Your Account! ✨
           </button>
